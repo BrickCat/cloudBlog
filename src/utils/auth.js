@@ -17,13 +17,13 @@ export function removeToken() {
 }
 
 export function getUser () {
-    return Cookies.get(UserInfoKey)
+    return localStorage.getItem(UserInfoKey)
 }
 
 export function setUser (user) {
-    return Cookies.set(UserInfoKey,user)
+    return localStorage.setItem(UserInfoKey,user)
 }
 
 export function removeUser () {
-    return Cookies.remove(UserInfoKey)
+    return localStorage.removeItem(UserInfoKey)
 }

@@ -54,8 +54,8 @@ export default {
         return {
             loading: false,
             loginForm: {
-                username: null,
-                password: null,
+                username: 'admin',
+                password: '123456',
                 code: '',
                 randomStr: Math.ceil(Math.random() * 100000) + '_' + Date.now(),
                 mobile: null,
@@ -84,9 +84,6 @@ export default {
                         this.$store.commit('SET_TOKEN',data.access_token)
                         this.$store.commit('SET_REFRESH_TOKEN',data.refresh_token)
                         this.$store.dispatch('GetInfo')
-                        this.$router.push({
-                            name: 'blog_index'
-                        })
                     }).catch(error =>{
                         this.loading = false;
                         console.error(error);

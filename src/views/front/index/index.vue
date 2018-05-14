@@ -46,7 +46,7 @@
                         <Dropdown v-show="isLogin" transfer trigger="hover" @on-click="handleClickUserDropdown">
                             <a href="javascript:void(0)" style="color: white">
                                 <Avatar :src="avatorPath" />
-                                {{user.username}}
+                                    {{user.username}}
                                 <Icon type="arrow-down-b"></Icon>
                             </a>
                             <DropdownMenu slot="list" style="text-align: center;">
@@ -84,7 +84,13 @@
         name: 'index',
         data () {
             return {
-                user:{},
+                user:{
+                    useranme:'',
+                    avatar:'',
+                    roles:null,
+                    userId:'',
+                    permissions:null
+                },
                 isLogin: false,
                 isNotLogin: true,
                 value4: '',
@@ -135,7 +141,9 @@
         methods:{
             init () {
                 if(getUser()){
-                    this.user = getUser();
+                    let userInfo = JSON.parse(getUser());
+                    this.$set(this.user,'username',userInfo.username)
+                    this.$set(this.user,'avatar',userInfo.avatar)
                     this.isLogin = true;
                     this.isNotLogin = false;
                 }
@@ -149,8 +157,10 @@
                 this.$router.push({
                     name: 'login'
                 })
-                this.isLogin = true;
-                this.isNotLogin = false;
+                if(getUser()){
+                    this.isLogin = true;
+                    this.isNotLogin = false;
+                }
             },
             handleClickUserDropdown (name) {
                 if(name == 'logout'){
@@ -173,8 +183,11 @@
         },
         computed: {
             avatorPath () {
-                return localStorage.avatorImgPath;
+                return this.user.avatar;
             }
+        },
+        created(){
+
         },
         mounted () {
             this.init();

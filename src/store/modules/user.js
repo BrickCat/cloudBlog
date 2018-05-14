@@ -1,5 +1,7 @@
 import { login, mobileLogin, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken, setUser, removeUser } from '@/utils/auth'
+import {router} from '../../router';
+
 const user = {
     state: {
         token: getToken(),
@@ -47,7 +49,11 @@ const user = {
                         permissions[data.permissions[i]] = true
                     }
                     commit('SET_PERMISSIONS', permissions)
-                    setUser(data.sysUser);
+                    setUser(JSON.stringify(data.sysUser));
+                    alert(data.sysUser)
+                    router.push({
+                        name: 'blog_index'
+                    })
                     resolve(response)
                 }).catch(error => {
                     reject(error)
