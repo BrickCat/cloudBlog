@@ -78,7 +78,7 @@ export const otherRouter = {
     redirect: '/home',
     component: Main,
     children: [
-        { path: 'home', title: {i18n: 'home'}, name: 'home_index', component: () => import('@/views/home/home.vue') },
+        { path: 'home', meta:{title: 'ITBC - 后台管理'},title: {i18n: 'home'}, name: 'home_index', component: () => import('@/views/home/home.vue') },
         { path: 'ownspace', title: '个人中心', name: 'ownspace_index', component: () => import('@/views/own-space/own-space.vue') },
         { path: 'order/:order_id', title: '订单详情', name: 'order-info', component: () => import('@/views/advanced-router/component/order-info.vue') }, // 用于展示动态路由
         { path: 'shopping', title: '购物详情', name: 'shopping', component: () => import('@/views/advanced-router/component/shopping-info.vue') }, // 用于展示带参路由
@@ -94,7 +94,8 @@ export const blogRouter = {
     redirect: '/blog',
     component: Index,
     children: [
-        { path: 'blog_index', title: {i18n: 'blog_index'}, name: 'blog_index', component: () => import('@/views/front/article/articleList.vue') }
+        { path: 'blog_index', meta: {title: 'ITBC - 热门文章'}, name: 'blog_index', component: () => import('@/views/front/article/articleList.vue') },
+        { path: 'ownspace2', title: '个人中心', name: 'ownspace_index2', component: () => import('@/views/own-space/own-space.vue') },
     ]
 };
 
@@ -102,6 +103,25 @@ export const blogRouter = {
 
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
+    {
+        path: '/admin-article',
+        icon: 'social-buffer',
+        name: 'admin-article',
+        title: '博客管理',
+        component: Main,
+        children: [
+            {
+                path: 'article-list',
+                icon: 'compose',
+                name: 'article-list',
+                meta: {
+                  title:'ITBC-文章管理'
+                },
+                title: '文章管理',
+                component: () => import('@/views/backed/article/article-table.vue')
+            }
+        ]
+    },
     {
         path: '/access',
         icon: 'key',

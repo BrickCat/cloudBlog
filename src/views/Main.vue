@@ -26,22 +26,20 @@
                         <Icon type="navicon" size="32"></Icon>
                     </Button>
                 </div>
-                <div class="header-middle-con">
-                    <div class="main-breadcrumb">
-                        <breadcrumb-nav :currentPath="currentPath"></breadcrumb-nav>
-                    </div>
-                </div>
+                <!--<div class="header-middle-con">-->
+                    <!--<div class="main-breadcrumb">-->
+                        <system-list style="display: inline-block;" :system="system" v-for="system in systems"></system-list>
+                        <!--<breadcrumb-nav :currentPath="currentPath"></breadcrumb-nav>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+
                 <div class="header-avator-con">
+                    <Button type="success" icon="paintbrush">&nbsp;发&nbsp;&nbsp;布&nbsp;</Button>
                     <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
                     <lock-screen></lock-screen>
-                    <div @click="indexTo" class="lock-screen-btn-con">
-                        <Tooltip content="锁屏" placement="bottom">
-                            <Icon type="locked" :size="20"></Icon>
-                        </Tooltip>
-                    </div>
                     <message-tip v-model="mesCount"></message-tip>
                     <theme-switch></theme-switch>
-
                     <div class="user-dropdown-menu-con">
                         <Row type="flex" justify="end" align="middle" class="user-dropdown-innercon">
                             <Dropdown transfer trigger="click" @on-click="handleClickUserDropdown">
@@ -50,6 +48,7 @@
                                     <Icon type="arrow-down-b"></Icon>
                                 </a>
                                 <DropdownMenu slot="list">
+                                    <DropdownItem name="blog_index">首页</DropdownItem>
                                     <DropdownItem name="ownSpace">个人中心</DropdownItem>
                                     <DropdownItem name="loginout" divided>退出登录</DropdownItem>
                                 </DropdownMenu>
@@ -78,6 +77,7 @@
     import breadcrumbNav from './main-components/breadcrumb-nav.vue';
     import fullScreen from './main-components/fullscreen.vue';
     import lockScreen from './main-components/lockscreen/lockscreen.vue';
+    import systemList from './main-components/system-list/system-list.vue'
     import messageTip from './main-components/message-tip.vue';
     import themeSwitch from './main-components/theme-switch/theme-switch.vue';
     import Cookies from 'js-cookie';
@@ -94,14 +94,27 @@
             lockScreen,
             messageTip,
             themeSwitch,
-            scrollBar
+            scrollBar,
+            systemList
         },
         data () {
             return {
                 shrink: false,
                 user: {},
                 isFullScreen: false,
-                openedSubmenuArr: this.$store.state.app.openedSubmenuArr
+                openedSubmenuArr: this.$store.state.app.openedSubmenuArr,
+                systems:[
+                    {
+                        name:'权限系统',
+                        img:'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1293081222,2104824452&fm=27&gp=0.jpg',
+                        url:'http://localhost:9527/'
+                    },
+                    {
+                        name:'博客系统',
+                        img:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=510047093,1631616758&fm=27&gp=0.jpg',
+                        url:'http://localhost:8001/#/particles'
+                    }
+                ]
             };
         },
         computed: {
@@ -115,7 +128,7 @@
                 return this.$store.state.app.currentPath; // 当前面包屑数组
             },
             avatorPath () {
-                return localStorage.avatorImgPath;
+                return this.user.avatar;
             },
             cachePage () {
                 return this.$store.state.app.cachePage;
@@ -137,7 +150,7 @@
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
-                this.user = getUser();
+                this.user = JSON.parse(getUser());
                 let messageCount = 3;
                 this.messageCount = messageCount.toString();
                 this.checkTag(this.$route.name);
@@ -164,6 +177,10 @@
                         this.$router.push({
                             name:'particles'
                         })
+                    })
+                }else if(name ==='blog_index'){
+                    this.$router.push({
+                        name:'blog_index'
                     })
                 }
             },

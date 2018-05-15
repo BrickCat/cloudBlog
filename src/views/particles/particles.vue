@@ -6,7 +6,7 @@
                 Nothing is impossible.
             </div>
             <div class="links">
-                <a href="#" @click="ArticleListTo">Blog</a>
+                <a href="javascript:void(0)" @click="ArticleListTo">Blog</a>
                 <a href="/share">Share</a>
                 <a target="_blank" href="http://weibo.com/1839900520">Weibo</a>
                 <a target="_blank" href="https://github.com/BrickCat">GitHub</a>

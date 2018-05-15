@@ -50,7 +50,6 @@ const user = {
                     }
                     commit('SET_PERMISSIONS', permissions)
                     setUser(JSON.stringify(data.sysUser));
-                    alert(data.sysUser)
                     router.push({
                         name: 'blog_index'
                     })

@@ -2,20 +2,20 @@
     <div class="layout">
         <Layout>
             <Header style="background-color: #F15A24;">
-                <Menu mode="horizontal" theme="dark" active-name="$route.name" @on-select="changeMenu" style="background-color: #F15A24;height: 60px;">
+                <Menu mode="horizontal" theme="dark" active-name="blog_index" @on-select="changeMenu" style="background-color: #F15A24;height: 60px;">
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
-                        <MenuItem name="blog_index">
+                        <MenuItem name="particles">
                             <Icon type="android-home"></Icon>
                             首页
                         </MenuItem>
-                        <MenuItem name="2">
+                        <MenuItem name="blog_index">
                             <Icon type="ios-keypad"></Icon>
-                            Item 2
+                            文章
                         </MenuItem>
-                        <MenuItem name="3">
+                        <MenuItem name="ownspace_index2">
                             <Icon type="ios-analytics"></Icon>
-                            Item 3
+                            个人中心
                         </MenuItem>
                         <MenuItem name="4">
                             <Icon type="ios-paper"></Icon>
