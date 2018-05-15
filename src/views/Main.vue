@@ -48,7 +48,7 @@
                                     <Icon type="arrow-down-b"></Icon>
                                 </a>
                                 <DropdownMenu slot="list">
-                                    <DropdownItem name="blog_index">首页</DropdownItem>
+                                    <DropdownItem name="particles">首页</DropdownItem>
                                     <DropdownItem name="ownSpace">个人中心</DropdownItem>
                                     <DropdownItem name="loginout" divided>退出登录</DropdownItem>
                                 </DropdownMenu>
@@ -178,9 +178,9 @@
                             name:'particles'
                         })
                     })
-                }else if(name ==='blog_index'){
+                }else if(name ==='particles'){
                     this.$router.push({
-                        name:'blog_index'
+                        name:'particles'
                     })
                 }
             },
