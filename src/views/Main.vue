@@ -35,7 +35,7 @@
 
 
                 <div class="header-avator-con">
-                    <Button type="success" icon="paintbrush">&nbsp;发&nbsp;&nbsp;布&nbsp;</Button>
+                    <Button type="success" icon="paintbrush" @click="handleArticlePub">&nbsp;发&nbsp;&nbsp;布&nbsp;</Button>
                     <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
                     <lock-screen></lock-screen>
                     <message-tip v-model="mesCount"></message-tip>
@@ -107,7 +107,7 @@
                     {
                         name:'权限系统',
                         img:'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1293081222,2104824452&fm=27&gp=0.jpg',
-                        url:'http://localhost:9527/'
+                        url:'http://localhost:8000/#/wel/index'
                     },
                     {
                         name:'博客系统',
@@ -158,6 +158,11 @@
             },
             toggleClick () {
                 this.shrink = !this.shrink;
+            },
+            handleArticlePub () {
+              this.$router.push({
+                  name:'article-publish'
+              })
             },
             indexTo (){
                 this.$router.push({
