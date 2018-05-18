@@ -30,6 +30,7 @@
 
 <script>
     import table2excel from '@/libs/table2excel.js';
+    import util from '@/libs/util.js';
     import {list} from '../../../api/article';
 
     export default {
@@ -70,26 +71,27 @@
                         title: '标题',
                         key: 'title',
                         render: (h, params) => {
-                            return h('div', [
-                                h('Icon', {
-                                    props: {
-                                        type: 'person'
-                                    }
-                                }),
-                                h('strong', params.row.name)
-                            ]);
+                            return h('a', {
+                                        href:''
+                                    },params.row.title);
                         }
                     },
                     {
-                        title: 'Age',
-                        key: 'age'
+                        title: '创建时间',
+                        key: 'createDate',
+                        sortable: true,
+                            render:(h,params) => {
+                            const row = params.row;
+                            let time = util.formatDate(new Date(row.createTime),'yyyy-MM-dd hh : mm');
+                            return h('p',time);
+                        }
                     },
                     {
                         title: 'Address',
                         key: 'address'
                     },
                     {
-                        title: 'Action',
+                        title: '操作',
                         key: 'action',
                         width: 150,
                         align: 'center',
@@ -105,7 +107,7 @@
                                     },
                                     on: {
                                         click: () => {
-                                            this.show(params.index)
+                                            this.show(params.index,params.row.id)
                                         }
                                     }
                                 }, 'View'),
@@ -116,7 +118,7 @@
                                     },
                                     on: {
                                         click: () => {
-                                            this.remove(params.index)
+                                            this.remove(params.index,params.row.id)
                                         }
                                     }
                                 }, 'Delete')
