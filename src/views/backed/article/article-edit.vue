@@ -147,7 +147,8 @@
 
 <script>
     import {put, get} from '../../../api/article';
-    import util from '../../../libs/util'
+    import util from '../../../libs/util';
+    import {tag_put} from '../../../api/tag';
 
     export default {
         name: 'artical-publish',
@@ -332,16 +333,39 @@
                 this.addingNewTag = !this.addingNewTag;
             },
             createNewTag () {
+                for(let i = 0; i<this.articleTagList.length; i++){
+                    let name = this.articleTagList[i].name;
+                    if(this.newTagName === name){
+                        this.$Message.error('该标签已存在！');
+                        return false;
+                    }
+                }
+
+                if(this.articleTagSelected.length == 3){
+                    this.$Message.info('最多只能选择三个标签');
+                    return false;
+                }
+
                 if (this.newTagName.length !== 0) {
                     let tag = {
                         id:new Date().getTime(),
-                        value:this.newTagName
+                        name:this.newTagName
                     }
-                    this.articleTagList.push(tag);
-                    this.addingNewTag = false;
-                    setTimeout(() => {
-                        this.newTagName = '';
-                    }, 200);
+                    tag_put(tag).then(reqs =>{
+                        let data = reqs.data;
+                        if(data.status === 200){
+                            this.articleTagList.push(tag);
+                            this.articleTagSelected.push(tag.id);
+                            this.addingNewTag = false;
+                            setTimeout(() => {
+                                this.newTagName = '';
+                            }, 200);
+                            this.$Message.success('添加成功~')
+                        }
+                    }).catch(error =>{
+                        console.error(error);
+                    })
+
                 } else {
                     this.$Message.error('请输入标签名');
                 }

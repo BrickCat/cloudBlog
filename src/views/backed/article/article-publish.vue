@@ -147,7 +147,6 @@
 
 <script>
     import {put} from '../../../api/article';
-    import util from '../../../libs/util'
     import {tag_put} from '../../../api/tag';
 
     export default {
