@@ -15,7 +15,25 @@ export function list (param) {
         {
             url: '/blog/article/list',
             method: 'GET',
-            data: param
+            params: param
+        }
+    )
+}
+
+export function get (id) {
+    return request(
+        {
+            url: '/blog/article/'+id,
+            method: 'GET'
+        }
+    )
+}
+
+export function romove (id) {
+    return request(
+        {
+            url: '/blog/article/remove/'+id,
+            method: 'DELETE'
         }
     )
 }

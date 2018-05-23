@@ -285,6 +285,14 @@ util.formatDate = function (date, fmt){
     }
     return fmt;
 };
+util.isNotEmpty = function (data) {
+    if( data!=null && data != undefined && data != ''){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 function padLeftZero(str) {
     return ('00' + str).substr(str.length);
 }

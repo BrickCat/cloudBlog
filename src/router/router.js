@@ -83,7 +83,8 @@ export const otherRouter = {
         { path: 'order/:order_id', title: '订单详情', name: 'order-info', component: () => import('@/views/advanced-router/component/order-info.vue') }, // 用于展示动态路由
         { path: 'shopping', title: '购物详情', name: 'shopping', component: () => import('@/views/advanced-router/component/shopping-info.vue') }, // 用于展示带参路由
         { path: 'message', title: '消息中心', name: 'message_index', component: () => import('@/views/message/message.vue') },
-        { path: 'article-publish', meta:{title: 'ITBC - 文章发布'}, title:'文章发布', name: 'article-publish', component: () => import('@/views/backed/article/article-publish.vue') }
+        { path: 'article-publish', meta:{title: 'ITBC - 文章发布'}, title:'文章发布', name: 'article-publish', component: () => import('@/views/backed/article/article-publish.vue') },
+        { path: 'article-edit', meta:{title: 'ITBC - 文章修改'}, title:'文章修改', name: 'article-edit', component: () => import('@/views/backed/article/article-edit.vue') }
     ]
 };
 

@@ -118,7 +118,7 @@
                         <Row>
                             <Col span="18">
                                 <Select v-model="articleTagSelected" multiple @on-change="handleSelectTag" placeholder="请选择文章标签">
-                                    <Option v-for="item in articleTagList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                                    <Option v-for="item in articleTagList" :value="item.id" :key="item.value">{{ item.value }}</Option>
                                 </Select>
                             </Col>
                             <Col span="6" class="padding-left-10">
@@ -146,9 +146,8 @@
 </template>
 
 <script>
-    import {put} from '../../../api/article';
+    import {put, get} from '../../../api/article';
     import util from '../../../libs/util'
-    import {tag_put} from '../../../api/tag';
 
     export default {
         name: 'artical-publish',
@@ -224,7 +223,7 @@
             };
         },
         created(){
-
+            this.getArticle();
         },
         methods: {
             $imgAdd(){
@@ -232,6 +231,54 @@
             },
             $imgDel(){
 
+            },
+            getArticle(){
+                let articleId = this.$route.query.articleId;
+                if(articleId){
+                    get(articleId).then(resq =>{
+                        let article = resq.data.data;
+                        this.$set(this.article,'id',article.id);
+                        this.$set(this.article,'title',article.title);
+                        this.$set(this.article,'password',article.password);
+                        this.$set(this.article,'article_md',article.article_md);
+                        this.$set(this.article,'article_html',article.article_html);
+                        this.$set(this.article,'status',article.status);
+                        this.$set(this.article,'topArticle',article.topArticle);
+                        this.$set(this.article,'type',article.type);
+                        if(article.type === '0'){
+                            this.currentOpenness = '0';
+                            this.Openness = '公开';
+                        }else if(article.type === '1'){
+                            this.currentOpenness = '1';
+                            this.Openness = '密码';
+                            this.$set(this.article,'password',article.password);
+                        }else if(article.type === '2'){
+                            this.currentOpenness = '1';
+                            this.Openness = '私密';
+                        }
+                        this.$set(this.article,'date',article.date);
+                        this.pushTime = util.formatDate(new Date(article.date),'yyyy-MM-dd hh:mm:ss');
+                        this.publishTimeType = 'timing';
+
+                        if(util.isNotEmpty(article.tag)){
+                            this.articleTagSelected = article.tag.split(',');
+                            this.$set(this.article,'tag',article.tag.split(','));
+                        }
+                        if(util.isNotEmpty(article.offenUsedClass)){
+                            this.offenUsedClassSelected = article.offenUsedClass.split(',');
+                            this.$set(this.article,'offenUsedClass',article.offenUsedClass.split(','));
+                        }
+                        if(util.isNotEmpty(article.classification)){
+                            this.classificationSelected = article.classification.split(',');
+                            this.$set(this.article,'classification',article.classification.split(','))
+                        }
+                        console.log(resq.data.data)
+                    }).catch(error =>{
+                        console.error(error);
+                    })
+                }else{
+                    this.$Message.error('未能找到该文章!');
+                }
             },
             handleEditOpenness () {
                 this.editOpenness = !this.editOpenness;
@@ -273,50 +320,28 @@
                 this.pushTime = datetime;
             },
             setClassificationInAll (selectedArray) {
-                this.classificationSelected = selectedArray.map(item => {
+                this.classificationFinalSelected = selectedArray.map(item => {
                     return item.id;
                 });
+                localStorage.classificationSelected = JSON.stringify(this.classificationFinalSelected); // 本地存储所选目录列表
             },
             setClassificationInOffen (selectedArray) {
-                this.offenUsedClassSelected = selectedArray;
+                this.classificationFinalSelected = selectedArray;
             },
             handleAddNewTag () {
                 this.addingNewTag = !this.addingNewTag;
             },
             createNewTag () {
-                for(let i = 0; i<this.articleTagList.length; i++){
-                    let name = this.articleTagList[i].name;
-                    if(this.newTagName === name){
-                        this.$Message.error('该标签已存在！');
-                        return false;
-                    }
-                }
-
-                if(this.articleTagSelected.length == 3){
-                    this.$Message.info('最多只能选择三个标签');
-                    return false;
-                }
-
                 if (this.newTagName.length !== 0) {
                     let tag = {
                         id:new Date().getTime(),
-                        name:this.newTagName
+                        value:this.newTagName
                     }
-                    tag_put(tag).then(reqs =>{
-                        let data = reqs.data;
-                        if(data.status === 200){
-                            this.articleTagList.push(tag);
-                            this.articleTagSelected.push(tag.id);
-                            this.addingNewTag = false;
-                            setTimeout(() => {
-                                this.newTagName = '';
-                            }, 200);
-                            this.$Message.success('添加成功~')
-                        }
-                    }).catch(error =>{
-                        console.error(error);
-                    })
-
+                    this.articleTagList.push(tag);
+                    this.addingNewTag = false;
+                    setTimeout(() => {
+                        this.newTagName = '';
+                    }, 200);
                 } else {
                     this.$Message.error('请输入标签名');
                 }
@@ -341,7 +366,6 @@
             handlePublish () {
                 if (this.canPublish()) {
                     this.publishLoading = true;
-                    this.$set(this.article,'id',new Date().getTime());
                     this.$set(this.article,'tag',this.articleTagSelected.toString());
                     this.$set(this.article,'type',this.currentOpenness);
                     this.$set(this.article,'date',new Date(this.pushTime));
@@ -383,12 +407,12 @@
         },
         mounted () {
             this.articleTagList = [
-                {id:'1',name: 'vue'},
-                {id:'2',name: 'iview'},
-                {id:'3',name: 'ES6'},
-                {id:'4',name: 'webpack'},
-                {id:'5',name: 'babel'},
-                {id:'6',name: 'eslint'}
+                {id:'1',value: 'vue'},
+                {id:'2',value: 'iview'},
+                {id:'3',value: 'ES6'},
+                {id:'4',value: 'webpack'},
+                {id:'5',value: 'babel'},
+                {id:'6',value: 'eslint'}
             ];
             this.classificationList = [
                 {

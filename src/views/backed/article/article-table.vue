@@ -31,7 +31,7 @@
 <script>
     import table2excel from '@/libs/table2excel.js';
     import util from '@/libs/util.js';
-    import {list} from '../../../api/article';
+    import {list,romove} from '../../../api/article';
 
     export default {
         name: 'article-table',
@@ -72,23 +72,103 @@
                         key: 'title',
                         render: (h, params) => {
                             return h('a', {
-                                        href:''
+                                    attrs:{
+                                            href:'http://www.baidu.com'
+                                        }
                                     },params.row.title);
+                        }
+                    },
+                    {
+                        title: '作者',
+                        key: 'author',
+                        align: 'center',
+                        render: (h,params) => {
+                            const row = params.row;
+                            return h('p',row.anthor.username);
+                        }
+                    },
+                    {
+                        title: '状态',
+                        align: 'center',
+                        key: 'status',
+                        render: (h,parmas) =>{
+                            const row = parmas.row;
+                            let color;
+                            let text;
+                            if(row.status == '0'){
+                                color = 'yellow';
+                                text = '草稿';
+                            }else{
+                                color = 'green';
+                                text = '已发布'
+                            }
+                            return h('Tag',{
+                                props:{
+                                    color:color,
+                                    type:'border'
+                                }
+                            },text)
+                        }
+                    },
+                    {
+                        title:'公开度',
+                        align: 'center',
+                        key: 'type',
+                        render: (h,parmas)=>{
+                            const row = parmas.row;
+                            let color;
+                            let text;
+                            if(row.type == '0'){
+                                color = 'green';
+                                text = '公开';
+                            }else if(row.type == '1'){
+                                color = 'yellow';
+                                text = '密码'
+                            }else{
+                                color = 'red';
+                                text = '私密'
+                            }
+                            return h('Tag',{
+                                props:{
+                                    color:color,
+                                    type:'dot'
+                                }
+                            },text)
+                        }
+                    },
+                    {
+                        title: '是否置顶',
+                        align: 'center',
+                        key: 'topArticle',
+                        render: (h,parmas)=>{
+                            const row = parmas.row;
+                            let color;
+                            let text;
+                            if(row.topArticle){
+                                color = 'red';
+                                text = '是';
+                            }else{
+                                color = 'blue';
+                                text = '否';
+                            }
+                            return h('Tag',{
+                                props:{
+                                    color:color,
+                                    type: 'border'
+                                }
+                            },text)
                         }
                     },
                     {
                         title: '创建时间',
                         key: 'createDate',
+                        align: 'center',
                         sortable: true,
                             render:(h,params) => {
                             const row = params.row;
-                            let time = util.formatDate(new Date(row.createTime),'yyyy-MM-dd hh : mm');
+                            let time = util.formatDate(new Date(row.createDate),'yyyy-MM-dd hh:mm:ss');
                             return h('p',time);
                         }
-                    },
-                    {
-                        title: 'Address',
-                        key: 'address'
                     },
                     {
                         title: '操作',
@@ -97,32 +177,45 @@
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'primary',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.show(params.index,params.row.id)
-                                        }
-                                    }
-                                }, 'View'),
-                                h('Button', {
-                                    props: {
-                                        type: 'error',
-                                        size: 'small'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.remove(params.index,params.row.id)
-                                        }
-                                    }
-                                }, 'Delete')
-                            ]);
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    this.editArticle(params.row.id)
+                                                }
+                                            }
+                                        }, '编辑'),
+                                        h('Poptip', {
+                                            props: {
+                                                confirm: true,
+                                                title: '您确定要删除这条数据吗?',
+                                                transfer: true
+                                            },
+                                            on: {
+                                                'on-ok': () => {
+                                                    this.data.splice(params.index, 1);
+                                                    this.deleteArticle(params.row.id);
+                                                }
+                                            }
+                                        }, [
+                                            h('Button', {
+                                                style: {
+                                                    margin: '0 5px'
+                                                },
+                                                props: {
+                                                    type: 'error',
+                                                    size: 'small',
+                                                    placement: 'top'
+                                                }
+                                            }, '删除')
+                                        ])
+                                    ]);
                         }
                     }
                 ]
@@ -132,7 +225,7 @@
 
         },
         mounted (){
-
+            this.init();
         },
         watch:{
 
@@ -143,19 +236,17 @@
             },
             initTable(page,pageSize){
                 this.loading = true;
-                var params = new URLSearchParams();
-                params.append('page',page);
-                params.append('pageSize',pageSize);
-                params.append('username',this.searchdata.username);
-                params.append('type',this.searchdata.type);
-                params.append('status',this.searchdata.status);
-                list(params).then(res =>{
+                this.searchdata.page = page;
+                this.searchdata.pageSize = pageSize;
+                list(this.searchdata).then(res =>{
                     console.log(res);
                     if(res.status===200){
-                        this.data = res.data.content;
-                        this.pagedata.total = res.data.totalElements;
+                        this.data = res.data.data.content;
+                        this.pagedata.total = res.data.data.totalElements;
                     }
                     this.loading = false;
+                }).catch(error=>{
+                    console.error(error)
                 });
             },
             changePage (page){
@@ -175,6 +266,24 @@
             },
             exportExcel (){
                 table2excel.transform(this.$refs.articlelist, 'hrefToExportTable', '文章一览');
+            },
+            editArticle(id) {
+                let query = {articleId:id};
+                this.$router.push({
+                    name:'article-edit',
+                    query:query
+                })
+            },
+            deleteArticle(articleId){
+                romove(articleId).then(resq =>{
+                    if(resq.data.data.status === 200){
+                        this.$Message.success('删除成功~');
+                    }else {
+                        this.$Message.error('删除失败~');
+                    }
+                }).catch(error =>{
+                    console.error(error);
+                })
             }
         }
     };
