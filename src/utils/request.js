@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Message } from 'iview'
+import { Message} from 'iview'
 import { router } from '@/router';
 import { getToken } from '@/utils/auth'
 import store from '../store'
