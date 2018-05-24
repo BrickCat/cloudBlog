@@ -31,7 +31,7 @@
 <script>
     import table2excel from '@/libs/table2excel.js';
     import util from '@/libs/util.js';
-    import {list,romove} from '../../../api/article';
+    import {list,romove} from '@/api/article';
 
     export default {
         name: 'article-table',

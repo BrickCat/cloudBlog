@@ -146,8 +146,8 @@
 </template>
 
 <script>
-    import {put} from '../../../api/article';
-    import {tag_put} from '../../../api/tag';
+    import {put} from '@/api/article';
+    import {tag_put} from '@/api/tag';
 
     export default {
         name: 'artical-publish',

@@ -1,67 +1,72 @@
 <template>
     <div class="layout">
         <Layout>
-            <Header style="background-color: #F15A24;">
-                <Menu mode="horizontal" theme="dark" active-name="blog_index" @on-select="changeMenu" style="background-color: #F15A24;height: 60px;">
+            <Header style="background-color: #DC5246;">
+                <Menu mode="horizontal" theme="dark" active-name="blog_index" @on-select="changeMenu" style="max-width: 1440px;min-width: 1210px;background-color:#DC5246;height: 60px;margin: 0 auto;text-align: center;">
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
-                        <MenuItem name="particles">
-                            <Icon type="android-home"></Icon>
-                            首页
-                        </MenuItem>
-                        <MenuItem name="blog_index">
-                            <Icon type="ios-keypad"></Icon>
-                            文章
-                        </MenuItem>
-                        <MenuItem name="ownspace_index2">
-                            <Icon type="ios-analytics"></Icon>
-                            个人中心
-                        </MenuItem>
-                        <MenuItem name="4">
-                            <Icon type="ios-paper"></Icon>
-                            Item 4
-                        </MenuItem>
-                        <AutoComplete
-                                v-model="value4"
-                                icon="ios-search"
-                                placeholder="input here"
-                                style="width:300px;margin-right: 4em;margin-left: 15px;"
-                                class="searchInput">
-                            <div class="demo-auto-complete-item" v-for="item in data4">
-                                <div class="demo-auto-complete-group">
-                                    <span>{{ item.title }}</span>
-                                    <a href="https://www.google.com/search?q=iView" target="_blank">更多</a>
+                        <div style="min-width: 800px;min-width:768px;padding-left: 14em;text-align: center;margin-left: 5%;">
+                            <MenuItem name="particles">
+                                <Icon type="android-home"></Icon>
+                                首页
+                            </MenuItem>
+                            <MenuItem name="blog_index">
+                                <Icon type="ios-keypad"></Icon>
+                                文章
+                            </MenuItem>
+                            <MenuItem name="ownspace_index2">
+                                <Icon type="ios-analytics"></Icon>
+                                个人中心
+                            </MenuItem>
+                            <MenuItem name="4">
+                                <Icon type="ios-paper"></Icon>
+                                Item 4
+                            </MenuItem>
+                        </div>
+                        <div style="right: 0px;float: right;width: 550px;">
+                            <AutoComplete
+                                    v-model="value4"
+                                    icon="ios-search"
+                                    placeholder="input here"
+                                    style="max-width:250px;min-width:150px;margin-right: 2em;"
+                                    class="searchInput">
+                                <div class="demo-auto-complete-item" v-for="item in data4">
+                                    <div class="demo-auto-complete-group">
+                                        <span>{{ item.title }}</span>
+                                        <a href="https://www.google.com/search?q=iView" target="_blank">更多</a>
+                                    </div>
+                                    <Option v-for="option in item.children" :value="option.title" :key="option.title">
+                                        <span class="demo-auto-complete-title">{{ option.title }}</span>
+                                        <span class="demo-auto-complete-count">{{ option.count }} 人关注</span>
+                                    </Option>
                                 </div>
-                                <Option v-for="option in item.children" :value="option.title" :key="option.title">
-                                    <span class="demo-auto-complete-title">{{ option.title }}</span>
-                                    <span class="demo-auto-complete-count">{{ option.count }} 人关注</span>
-                                </Option>
-                            </div>
-                            <a href="https://www.google.com/search?q=iView" target="_blank" class="demo-auto-complete-more">查看所有结果</a>
-                        </AutoComplete>
-                        <ButtonGroup v-show="isNotLogin">
-                            <Button type="ghost" style="color: white;" @click="loginTo">登录</Button>
-                            <Button type="ghost" style="color: white;">注册</Button>
-                        </ButtonGroup>
-                        <Dropdown v-show="isLogin" transfer trigger="hover" @on-click="handleClickUserDropdown">
-                            <a href="javascript:void(0)" style="color: white">
-                                <Avatar :src="avatorPath" />
-                                    {{user.username}}
-                                <Icon type="arrow-down-b"></Icon>
-                            </a>
-                            <DropdownMenu slot="list" style="text-align: center;">
-                                <DropdownItem name="admin">后台管理</DropdownItem>
-                                <DropdownItem divided name="logout">登出</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                                <a href="https://www.google.com/search?q=iView" target="_blank" class="demo-auto-complete-more">查看所有结果</a>
+                            </AutoComplete>
+                            <ButtonGroup v-show="isNotLogin">
+                                <Button type="ghost" style="color: white;" @click="loginTo">登录</Button>
+                                <Button type="ghost" style="color: white;">注册</Button>
+                            </ButtonGroup>
+                            <Dropdown v-show="isLogin" transfer trigger="hover" @on-click="handleClickUserDropdown">
+                                <a href="javascript:void(0)" style="color: white">
+                                    <Avatar :src="avatorPath" size="large"/>
+                                    <Icon type="arrow-down-b"></Icon>
+                                </a>
+                                <DropdownMenu slot="list" style="text-align: center;">
+                                    <DropdownItem name="admin">后台管理</DropdownItem>
+                                    <DropdownItem divided name="logout">登出</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                            <Button type="success" icon="ios-nutrition" style="margin-left: 1em;" shape="circle" size="large" @click="handleArticlePub">&nbsp;发&nbsp;&nbsp;布&nbsp;</Button>
+                        </div>
                     </div>
                 </Menu>
             </Header>
+
             <div class="single-page-con">
                 <div class="single-page">
                     <router-view></router-view>
                 </div>
-                <footer>
+                <footer style="margin-top: 1em;">
                     <div class='address'>
                         <div class='data'>
                             <img src='../../../images/logo.png' />
@@ -74,6 +79,7 @@
                     </div>
                 </footer>
             </div>
+
         </Layout>
     </div>
 </template>
@@ -179,7 +185,12 @@
                     })
                 }
 
-            }
+            },
+            handleArticlePub () {
+                this.$router.push({
+                    name:'article-publish'
+                })
+            },
         },
         computed: {
             avatorPath () {
@@ -191,6 +202,10 @@
         },
         mounted () {
             this.init();
+
+        },
+        watch: {
+
         },
         destroyed () {
 
@@ -201,8 +216,9 @@
 <style scoped>
     .layout{
         border: 1px solid #d7dde4;
-        min-width: 768px;
-        background: #f5f7f9;
+        max-width: 100%;
+        min-width: 1010px;
+        background: #ffffff;
         position: relative;
         border-radius: 4px;
         overflow: hidden;
@@ -217,12 +233,10 @@
         float: left;
         position: relative;
         top: 15px;
-        left: 20px;
+        left: 100px;
     }
     .layout-nav{
-        width: 910px;
         margin: 0 auto;
-        margin-right: 0px;
     }
     .layout-footer-center{
         text-align: center;
@@ -243,14 +257,15 @@
         right: 0;
         bottom: 0;
         overflow: auto;
-        background-color: #F0F0F0;
+        background-color: #ffffff;
         z-index: 1;
         transition: left .3s;
         width: 100%;
     }
     .single-page{
         background-color: white;
-        width: 75%;
+        max-width: 960px;
+        min-width: 750px;
         margin: 0 auto;
     }
     .address {

@@ -1,13 +1,13 @@
 <template>
     <Row type="flex" justify="center" align="middle" style="margin-bottom: 1.5em;">
         <Col span="20">
-            <Card>
+            <Card :bordered="False" dis-hover :padding="0">
                 <div>
                     <a>
                         <Row type="flex">
                             <Col :xs="24" :sm="24">
                                 <div>
-                                    <time class="post-time" title="2018-4-28 15:30:01">2018-4-28</time>
+                                    <time class="post-time" title="2018-4-28 15:30:01">{{article.ago}}</time>
                                     <span class="post-dian">·</span>
                                     <div class="category-list" v-for="tag in tags" v-on:click="tagTo(tag.name)">
                                         <a class="category-list-item" href="javascript:void(0)">{{tag.name}}</a>
@@ -17,13 +17,13 @@
                             <Col :xs="24" :sm="24">
                                 <h2 class="post-title">
                                     <a class="post-title-link">
-                                        Spring cloud config server 使用本地配置文件
+                                        {{article.title}}
                                     </a>
                                 </h2>
                             </Col>
                             <Col :xs="24" :sm="24">
                                 <div class="post-content">
-                                    为了解决有的时候使用Git作为Config Server托管中心拉取配置失败的问题 学习Spring Cloud有一段时间了，今天在码云上看见一个非常不错的 Spring Cloud的项目 Pig ,功能十分强大，配套教程、文档也特别全。这么牛逼的项目不得down下来学习学习？于是clone下来，跟着视频安装好了各种环境，本以为万无一失的挨个启动就可以了。没想到启动到Config Serve...
+                                    {{article.desc}}...
                                     <span><a href="">
                                         阅读更多...
                                     </a></span>
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-
     const ARTICLE_TYPE_NO_IMAGE = 0;
     const ARTICLE_TYPE_NORMAL_IMAGE = 1;
     const ARTICLE_TYPE_BIG_IMAGE = 2;
@@ -56,6 +55,7 @@
         data () {
             return {
                 color: '#FE4580',
+                False:false,
                 tags: [
                     {
                         name:'home',
