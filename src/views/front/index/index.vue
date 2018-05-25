@@ -3,9 +3,11 @@
         <Layout>
             <Header style="background-color: #DC5246;">
                 <Menu mode="horizontal" theme="dark" active-name="blog_index" @on-select="changeMenu" style="max-width: 1440px;min-width: 1210px;background-color:#DC5246;height: 60px;margin: 0 auto;text-align: center;">
-                    <div class="layout-logo"></div>
+                    <div class="layout-logo">
+                        葵 灯
+                    </div>
                     <div class="layout-nav">
-                        <div style="min-width: 800px;min-width:768px;padding-left: 14em;text-align: center;margin-left: 5%;">
+                        <div style="min-width: 800px;min-width:768px;padding-left: 13em;text-align: center;margin-left: -6%;font-size: 24px;">
                             <MenuItem name="particles">
                                 <Icon type="android-home"></Icon>
                                 首页
@@ -217,7 +219,7 @@
     .layout{
         border: 1px solid #d7dde4;
         max-width: 100%;
-        min-width: 1010px;
+        min-width: 1210px;
         background: #ffffff;
         position: relative;
         border-radius: 4px;
@@ -227,13 +229,18 @@
     }
     .layout-logo{
         width: 100px;
-        height: 30px;
-        background: #5b6270;
+        height: 40px;
+        /*background: #FECD45;*/
         border-radius: 3px;
         float: left;
         position: relative;
-        top: 15px;
-        left: 100px;
+        line-height: 40px;
+        font-family: STXingkai;
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+        top: 12px;
+        left: 20px;
     }
     .layout-nav{
         margin: 0 auto;
@@ -257,7 +264,7 @@
         right: 0;
         bottom: 0;
         overflow: auto;
-        background-color: #ffffff;
+        background-color: #f0f0f0;
         z-index: 1;
         transition: left .3s;
         width: 100%;

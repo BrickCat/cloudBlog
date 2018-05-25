@@ -8,7 +8,7 @@
             </Col>
         </transition>
         <transition>
-            <Col span="6" class="padding-left-0" v-if="!spinShow">
+            <Col span="6" style="padding-right: 15px;" v-if="!spinShow">
                 <div>
                     <Card :bordered="False" dis-hover :padding="5">
                         <p slot="title">

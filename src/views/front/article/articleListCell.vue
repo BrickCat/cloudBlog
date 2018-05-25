@@ -1,6 +1,6 @@
 <template>
     <Row type="flex" justify="center" align="middle" style="margin-bottom: 1.5em;">
-        <Col span="20">
+        <Col span="22">
             <Card :bordered="False" dis-hover :padding="0">
                 <div>
                     <a>
