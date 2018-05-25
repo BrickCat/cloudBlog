@@ -4,6 +4,10 @@ const TokenKey = 'Blog-Token'
 
 const UserInfoKey = 'Blog-UserInfo'
 
+const UserRoleKey =  'Blog-Role'
+
+const GuestKey = 'Blog-Guest'
+
 export function getToken() {
   return Cookies.get(TokenKey)
 }
@@ -26,4 +30,24 @@ export function setUser (user) {
 
 export function removeUser () {
     return localStorage.removeItem(UserInfoKey)
+}
+
+export function setAdmin (role) {
+    return localStorage.setItem(UserRoleKey,role);
+}
+
+export function getAdmin () {
+    return localStorage.getItem(UserRoleKey);
+}
+export function removeAdmin () {
+    return localStorage.removeItem(UserRoleKey)
+}
+
+export function setGuest (username) {
+    return localStorage.setItem(GuestKey,username)
+
+}
+
+export function getGuest () {
+    return localStorage.getItem(GuestKey)
 }

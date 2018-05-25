@@ -99,7 +99,7 @@
             }
         },
         mounted () {
-
+            alert(window.location.host)
         }
     };
 </script>

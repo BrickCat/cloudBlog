@@ -28,7 +28,7 @@ router.beforeEach((to, from, next) => {
         next(false);
     } else {
         if (!getToken() && to.name !== 'login') { // 判断是否已经登录且前往的页面不是登录页
-            let str = ["preview","particles","blog","blog_index","Banana","Orange","Apple"];
+            let str = ["blog","blog_index","error-404"];
             if(str.indexOf(to.name) != -1){
                 next()
             }else{
@@ -53,6 +53,7 @@ router.beforeEach((to, from, next) => {
                     });
                 }
             } else { // 没有配置权限的路由, 直接通过
+
                 Util.toDefaultPage([...routers], to.name, router, next);
             }
         }

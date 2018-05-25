@@ -13,8 +13,8 @@ export const loginRouter = {
 
 // 不作为Main组件的子页面展示的页面单独写，如下
 export const indexRouter = {
-    path: '/particles',
-    name: 'particles',
+    path: '/blog/:username',
+    name: 'blog',
     meta: {
         title: 'ITBC - 首页'
     },
@@ -62,15 +62,6 @@ export const locking = {
     component: () => import('@/views/main-components/lockscreen/components/locking-page.vue')
 };
 
-export const particles = {
-    path: '/particles',
-    name: 'particles',
-    meta: {
-        title: '首页'
-    },
-    component: () => import('@/views/particles/particles.vue')
-};
-
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
 export const otherRouter = {
     path: '/',
@@ -93,7 +84,6 @@ export const otherRouter = {
 export const blogRouter = {
     path: '/',
     name: 'blogRouter',
-    redirect: '/blog',
     component: Index,
     children: [
         { path: 'blog_index', meta: {title: 'ITBC - 热门文章'}, name: 'blog_index', component: () => import('@/views/front/article/articleList.vue') },

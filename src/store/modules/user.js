@@ -1,5 +1,5 @@
 import { login, mobileLogin, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken, setUser, removeUser } from '@/utils/auth'
+import { getToken, setToken, removeToken, setUser, removeUser, setAdmin } from '@/utils/auth'
 import {router} from '../../router';
 
 const user = {
@@ -46,6 +46,12 @@ const user = {
                     const permissions = {}
                     for (let i = 0; i < data.permissions.length; i++) {
                         permissions[data.permissions[i]] = true
+                    }
+                    console.log(data.roles)
+                    for (let i = 0; i< data.roles.length;i++){
+                        if("ROLE_ADMIN" == data.roles[i]){
+                            setAdmin(true)
+                        }
                     }
                     commit('SET_PERMISSIONS', permissions)
                     setUser(JSON.stringify(data.sysUser));
