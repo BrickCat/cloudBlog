@@ -147,7 +147,7 @@
 
 <script>
     import {put} from '@/api/article';
-    import {tag_put} from '@/api/tag';
+    import {tag_put, tag_list_component} from '@/api/tag';
 
     export default {
         name: 'artical-publish',
@@ -223,9 +223,12 @@
             };
         },
         created(){
-
+            this.init();
         },
         methods: {
+            init(){
+                this.getTagList();
+            },
             $imgAdd(){
 
             },
@@ -338,6 +341,7 @@
                 }
             },
             handlePublish () {
+                alert(this.articleTagSelected.toString())
                 if (this.canPublish()) {
                     this.publishLoading = true;
                     this.$set(this.article,'id',new Date().getTime());
@@ -375,20 +379,20 @@
                     tags[2] = this.articleTagSelected[2];
                     this.articleTagSelected = tags;
                 }
+            },
+            getTagList(){
+                tag_list_component().then(resq =>{
+                    let tags = resq.data.data;
+                    this.articleTagList = tags;
+                }).catch(e =>{
+                    console.log(e)
+                })
             }
         },
         computed: {
 
         },
         mounted () {
-            this.articleTagList = [
-                {id:'1',name: 'vue'},
-                {id:'2',name: 'iview'},
-                {id:'3',name: 'ES6'},
-                {id:'4',name: 'webpack'},
-                {id:'5',name: 'babel'},
-                {id:'6',name: 'eslint'}
-            ];
             this.classificationList = [
                 {
                     id:'1',

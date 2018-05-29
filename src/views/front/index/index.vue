@@ -50,7 +50,7 @@
                             </ButtonGroup>
                             <Dropdown v-show="isLogin" transfer trigger="hover" @on-click="handleClickUserDropdown">
                                 <a href="javascript:void(0)" style="color: white">
-                                    <Avatar :src="avatorPath" size="large"/>
+                                    <Avatar :src="avatorPath" size="large" style="border: 1px solid #fff;background-color: white;"/>
                                     <Icon type="arrow-down-b"></Icon>
                                 </a>
                                 <DropdownMenu slot="list" style="text-align: center;">

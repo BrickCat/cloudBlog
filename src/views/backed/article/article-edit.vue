@@ -58,7 +58,7 @@
                                     </Radio>
                                 </RadioGroup>
                                 <div>
-                                    <Button type="primary" @click="handleSaveOpenness">确认</Button>
+                                    <Button @click="handleSaveOpenness" type="success">确认</Button>
                                     <Button type="ghost" @click="cancelEditOpenness">取消</Button>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
                                     <DatePicker @on-change="setPublishTime" :value="article.date" type="datetime" style="width:200px;" placeholder="选择日期和时间" ></DatePicker>
                                 </div>
                                 <div class="margin-top-10">
-                                    <Button type="primary" @click="handleSavePublishTime">确认</Button>
+                                    <Button type="success" @click="handleSavePublishTime">确认</Button>
                                     <Button type="ghost" @click="cancelEditPublishTime">取消</Button>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                     </p>
                     <Row class="margin-top-20 publish-button-con">
                         <span class="publish-button"><Button @click="handleSaveDraft">保存草稿</Button></span>
-                        <span class="publish-button"><Button @click="handlePublish" :loading="publishLoading" icon="ios-checkmark" style="width:90px;" type="primary">发布</Button></span>
+                        <span class="publish-button"><Button @click="handlePublish" :loading="publishLoading" icon="ios-checkmark" style="width:90px;" type="success">发布</Button></span>
                     </Row>
                 </Card>
                 <div class="margin-top-10">
@@ -118,7 +118,7 @@
                         <Row>
                             <Col span="18">
                                 <Select v-model="articleTagSelected" multiple @on-change="handleSelectTag" placeholder="请选择文章标签">
-                                    <Option v-for="item in articleTagList" :value="item.id" :key="item.value">{{ item.value }}</Option>
+                                    <Option v-for="item in articleTagList" :value="item.id" :key="item.name">{{ item.name }}</Option>
                                 </Select>
                             </Col>
                             <Col span="6" class="padding-left-10">
@@ -131,7 +131,7 @@
                                     <Input v-model="newTagName" placeholder="请输入标签名" />
                                 </Col>
                                 <Col span="5" class="padding-left-10">
-                                    <Button @click="createNewTag" long type="primary">确定</Button>
+                                    <Button @click="createNewTag" long type="success">添加</Button>
                                 </Col>
                                 <Col span="5" class="padding-left-10">
                                     <Button @click="cancelCreateNewTag" long type="ghost">取消</Button>
@@ -148,7 +148,7 @@
 <script>
     import {put, get} from '@/api/article';
     import util from '@/libs/util';
-    import {tag_put} from '@/api/tag';
+    import {tag_put, tag_list_component} from '@/api/tag';
 
     export default {
         name: 'artical-publish',
@@ -224,9 +224,13 @@
             };
         },
         created(){
-            this.getArticle();
+            this.init();
         },
         methods: {
+            init(){
+                this.getTagList();
+                this.getArticle();
+            },
             $imgAdd(){
 
             },
@@ -237,43 +241,48 @@
                 let articleId = this.$route.query.articleId;
                 if(articleId){
                     get(articleId).then(resq =>{
-                        let article = resq.data.data;
-                        this.$set(this.article,'id',article.id);
-                        this.$set(this.article,'title',article.title);
-                        this.$set(this.article,'password',article.password);
-                        this.$set(this.article,'article_md',article.article_md);
-                        this.$set(this.article,'article_html',article.article_html);
-                        this.$set(this.article,'status',article.status);
-                        this.$set(this.article,'topArticle',article.topArticle);
-                        this.$set(this.article,'type',article.type);
-                        if(article.type === '0'){
-                            this.currentOpenness = '0';
-                            this.Openness = '公开';
-                        }else if(article.type === '1'){
-                            this.currentOpenness = '1';
-                            this.Openness = '密码';
+                        if(resq.data.status ===200){
+                            let article = resq.data.data;
+                            this.$set(this.article,'id',article.id);
+                            this.$set(this.article,'title',article.title);
                             this.$set(this.article,'password',article.password);
-                        }else if(article.type === '2'){
-                            this.currentOpenness = '1';
-                            this.Openness = '私密';
-                        }
-                        this.$set(this.article,'date',article.date);
-                        this.pushTime = util.formatDate(new Date(article.date),'yyyy-MM-dd hh:mm:ss');
-                        this.publishTimeType = 'timing';
+                            this.$set(this.article,'article_md',article.article_md);
+                            this.$set(this.article,'article_html',article.article_html);
+                            this.$set(this.article,'status',article.status);
+                            this.$set(this.article,'topArticle',article.topArticle);
+                            this.$set(this.article,'type',article.type);
+                            if(article.type === '0'){
+                                this.currentOpenness = '0';
+                                this.Openness = '公开';
+                            }else if(article.type === '1'){
+                                this.currentOpenness = '1';
+                                this.Openness = '密码';
+                                this.$set(this.article,'password',article.password);
+                            }else if(article.type === '2'){
+                                this.currentOpenness = '1';
+                                this.Openness = '私密';
+                            }
+                            this.$set(this.article,'date',article.date);
+                            this.pushTime = util.formatDate(new Date(article.date),'yyyy-MM-dd hh:mm:ss');
+                            this.publishTimeType = 'timing';
 
-                        if(util.isNotEmpty(article.tag)){
-                            this.articleTagSelected = article.tag.split(',');
-                            this.$set(this.article,'tag',article.tag.split(','));
+                            this.articleTagSelected = article.tags;
+                            this.$set(this.article,'tag',article.tags);
+
+                            if(util.isNotEmpty(article.offenUsedClass)){
+                                this.offenUsedClassSelected = article.offenUsedClass.split(',');
+                                this.$set(this.article,'offenUsedClass',article.offenUsedClass.split(','));
+                            }
+                            if(util.isNotEmpty(article.classification)){
+                                this.classificationSelected = article.classification.split(',');
+                                this.$set(this.article,'classification',article.classification.split(','))
+                            }
+                        }else{
+                            this.$Notice.error({
+                                title: '错误提示',
+                                desc: resq.data.msg
+                            });
                         }
-                        if(util.isNotEmpty(article.offenUsedClass)){
-                            this.offenUsedClassSelected = article.offenUsedClass.split(',');
-                            this.$set(this.article,'offenUsedClass',article.offenUsedClass.split(','));
-                        }
-                        if(util.isNotEmpty(article.classification)){
-                            this.classificationSelected = article.classification.split(',');
-                            this.$set(this.article,'classification',article.classification.split(','))
-                        }
-                        console.log(resq.data.data)
                     }).catch(error =>{
                         console.error(error);
                     })
@@ -424,20 +433,21 @@
                     tags[2] = this.articleTagSelected[2];
                     this.articleTagSelected = tags;
                 }
+            },
+            getTagList(){
+                tag_list_component().then(resq =>{
+                    let tags = resq.data.data;
+                    this.articleTagList = tags;
+                    console.log(this.articleTagList)
+                }).catch(e =>{
+                    console.log(e)
+                })
             }
         },
         computed: {
 
         },
         mounted () {
-            this.articleTagList = [
-                {id:'1',value: 'vue'},
-                {id:'2',value: 'iview'},
-                {id:'3',value: 'ES6'},
-                {id:'4',value: 'webpack'},
-                {id:'5',value: 'babel'},
-                {id:'6',value: 'eslint'}
-            ];
             this.classificationList = [
                 {
                     id:'1',

@@ -56,7 +56,7 @@ const user = {
                     commit('SET_PERMISSIONS', permissions)
                     setUser(JSON.stringify(data.sysUser));
                     router.push({
-                        name: 'blog_index'
+                        name: 'home_index'
                     })
                     resolve(response)
                 }).catch(error => {

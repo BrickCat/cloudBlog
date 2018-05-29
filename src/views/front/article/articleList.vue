@@ -1,14 +1,19 @@
 <template>
     <Row style="padding-top: 20px;padding-bottom: 20px;" :style="{height:this.height}">
         <transition name="fade">
-            <Col span="18" v-if="!spinShow">
+            <Col span="18" v-if="False">
+                没有文章
+            </Col>
+        </transition>
+        <transition name="fade">
+            <Col span="18" v-if="cardShow">
                 <Card :bordered="False" dis-hover :padding="0">
                     <article-list-cell v-for="article in articles" :article="article"></article-list-cell>
                 </Card>
             </Col>
         </transition>
         <transition>
-            <Col span="6" style="padding-right: 15px;" v-if="!spinShow">
+            <Col span="6" style="padding-right: 15px;" v-if="cardShow">
                 <div>
                     <Card :bordered="False" dis-hover :padding="5">
                         <p slot="title">
@@ -72,6 +77,7 @@
                 },
                 False:false,
                 spinShow: true,
+                cardShow:false,
                 height:''
             }
         },
@@ -88,18 +94,24 @@
         methods: {
             init(){
                 list(this.searchdata).then(resq =>{
-                   this.articles = resq.data.data.content
-                    setTimeout(() => {
-                        this.spinShow=false;
+                    this.articles = resq.data.data.content;
+                    if(this.articles.length === 0){
+                        this.False = true;
+                        this.spinShow = false;
                         this.height = '100%';
-                    }, 3000);
+                    }else{
+                        setTimeout(() => {
+                            this.cardShow = true;
+                            this.height = '100%';
+                        }, 3000);
+                    }
+                    this.spinShow = false;
                 }).catch(error =>{
                     console.error(error);
                 })
             }
         },
         mounted () {
-            alert(window.location.host)
         }
     };
 </script>

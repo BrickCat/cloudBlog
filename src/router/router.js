@@ -86,8 +86,8 @@ export const blogRouter = {
     name: 'blogRouter',
     component: Index,
     children: [
-        { path: 'blog_index', meta: {title: 'ITBC - 热门文章'}, name: 'blog_index', component: () => import('@/views/front/article/articleList.vue') },
-        { path: 'ownspace2', title: '个人中心', name: 'ownspace_index2', component: () => import('@/views/own-space/own-space.vue') },
+        { path: 'blog_index', meta: {title: 'ITBC - 热门文章'}, name: 'blog_index',component: () => import('@/views/front/article/articleList.vue') },
+        { path: 'ownspace2', title: '个人中心', name: 'ownspace_index2',component: () => import('@/views/own-space/own-space.vue') },
     ]
 };
 
@@ -111,6 +111,16 @@ export const appRouter = [
                 },
                 title: '文章管理',
                 component: () => import('@/views/backed/article/article-table.vue')
+            },
+            {
+                path: 'tag-list',
+                icon: 'ios-pricetags-outline',
+                name: 'tag-list',
+                meta: {
+                    title: 'ITBC-标签管理'
+                },
+                title: '标签管理',
+                component: () => import('@/views/backed/tag/tag-table.vue')
             }
         ]
     },
