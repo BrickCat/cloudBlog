@@ -68,6 +68,13 @@
                 }],
                 columns: [
                     {
+                        title:'序号',
+                        type:'index',
+                        sortable:true,
+                        width:80,
+                        align:'center'
+                    },
+                    {
                         title: '标题',
                         key: 'title',
                         render: (h, params) => {
