@@ -9,7 +9,7 @@
                                 <div>
                                     <time class="post-time" title="2018-4-28 15:30:01">{{article.ago}}</time>
                                     <span class="post-dian">·</span>
-                                    <div class="category-list" v-for="tag in tags" v-on:click="tagTo(tag.name)">
+                                    <div class="category-list" v-for="tag in article._f_tags" v-on:click="tagTo(tag.id)">
                                         <a class="category-list-item" href="javascript:void(0)">{{tag.name}}</a>
                                     </div>
                                 </div>
@@ -56,20 +56,6 @@
             return {
                 color: '#FE4580',
                 False:false,
-                tags: [
-                    {
-                        name:'home',
-                        color:'#FE4580'
-                    },
-                    {
-                        name:'categroy',
-                        color:'#FE4580'
-                    },
-                    {
-                        name:'tag',
-                        color:'#FE4580'
-                    }
-                ]
             }
         },
         props: {
@@ -84,6 +70,9 @@
             tagTo (tag){
                 alert(tag);
             }
+        },
+        mounted (){
+            console.log(this.article)
         }
     };
 </script>

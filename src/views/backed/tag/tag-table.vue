@@ -49,8 +49,10 @@
                     </Row>
                     <Row style="margin-top: 1em;">
                         <Col span="6" offset="9">
-                            <span @click="handleSubmit" style="margin: 0 10px;"><Button type="success">提交</Button></span>
-                            <span @click="handleCancel" style="margin: 0 10px;"><Button type="primary">取消</Button></span>
+                            <div style="width: 150px;">
+                                <span @click="handleSubmit" style="margin: 0 5px;"><Button type="success">提交</Button></span>
+                                <span @click="handleCancel" style="margin: 0 10px;"><Button type="primary">取消</Button></span>
+                            </div>
                         </Col>
                     </Row>
                 </Card>

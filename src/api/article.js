@@ -1,5 +1,10 @@
 import request from '@/utils/request'
 
+/**
+ * 后台 Api
+ * @param article
+ */
+
 export function put (article) {
     return request(
         {
@@ -34,6 +39,19 @@ export function romove (id) {
         {
             url: '/blog/article/remove/'+id,
             method: 'DELETE'
+        }
+    )
+}
+
+/**
+ * 前台 Api
+ */
+export function _f_article_list (param) {
+    return request(
+        {
+            url: '/blog/article/f/list',
+            method: 'GET',
+            params: param
         }
     )
 }

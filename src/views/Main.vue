@@ -48,7 +48,7 @@
                                     <Icon type="arrow-down-b"></Icon>
                                 </a>
                                 <DropdownMenu slot="list">
-                                    <DropdownItem name="particles">首页</DropdownItem>
+                                    <DropdownItem name="blog_index">首页</DropdownItem>
                                     <DropdownItem name="ownSpace">个人中心</DropdownItem>
                                     <DropdownItem name="loginout" divided>退出登录</DropdownItem>
                                 </DropdownMenu>
@@ -180,12 +180,15 @@
                     this.$store.dispatch('LogOut').then(() => {
                         //location.reload() // 为了重新实例化vue-router对象 避免bug
                         this.$router.push({
-                            name:'particles'
+                            name:'login'
                         })
                     })
-                }else if(name ==='particles'){
+                }else if(name ==='blog_index'){
                     this.$router.push({
-                        name:'particles'
+                        name:'blog',
+                        params:{
+                            username:this.user.username
+                        }
                     })
                 }
             },

@@ -8,7 +8,7 @@
                     </div>
                     <div class="layout-nav">
                         <div style="min-width: 800px;min-width:768px;padding-left: 13em;text-align: center;margin-left: -6%;font-size: 24px;">
-                            <MenuItem name="particles">
+                            <MenuItem name="blog">
                                 <Icon type="android-home"></Icon>
                                 首页
                             </MenuItem>
@@ -29,10 +29,10 @@
                             <AutoComplete
                                     v-model="value4"
                                     icon="ios-search"
-                                    placeholder="input here"
+                                    placeholder="请输入关键字查询..."
                                     style="max-width:250px;min-width:150px;margin-right: 2em;"
                                     class="searchInput">
-                                <div class="demo-auto-complete-item" v-for="item in data4">
+                                <div class="demo-auto-complete-item" v-for="item in data4" style="text-align: left;">
                                     <div class="demo-auto-complete-group">
                                         <span>{{ item.title }}</span>
                                         <a href="https://www.google.com/search?q=iView" target="_blank">更多</a>
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-    import { getUser } from '@/utils/auth'
+    import { getUser,getGuest } from '@/utils/auth'
     export default {
         name: 'index',
         data () {
@@ -157,9 +157,18 @@
                 }
             },
             changeMenu(active){
-                this.$router.push({
-                    name:active
-                })
+                if(active === 'blog'){
+                    this.$router.push({
+                        name:'blog',
+                        params:{
+                            username: getGuest()
+                        }
+                    })
+                }else{
+                    this.$router.push({
+                        name:active
+                    })
+                }
             },
             loginTo () {
                 this.$router.push({
@@ -264,7 +273,7 @@
         right: 0;
         bottom: 0;
         overflow: auto;
-        background-color: #f0f0f0;
+        background-color: #ffffff;
         z-index: 1;
         transition: left .3s;
         width: 100%;

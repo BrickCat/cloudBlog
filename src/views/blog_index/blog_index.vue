@@ -1,7 +1,7 @@
 <template>
     <div id="particles" style="width: 100%;height: 100%;">
         <div style="position:absolute; top:50%; transform:translate(0,-50%);justify-content: center;text-align: center;">
-            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="height: 120px;width: 120px;border-radius: 60px;margin-bottom: 1em;margin-left: auto;margin-right: auto;" />
+            <img src="../../images/avatar.png" style="height: 120px;width: 120px;border-radius: 60px;margin-bottom: 1em;margin-left: auto;margin-right: auto;" />
             <div class="description">
                 Nothing is impossible.
             </div>
@@ -19,8 +19,7 @@
 
 <script>
     import particles from 'particles.js';
-    import Cookies from 'js-cookie'
-
+    import { setGuest } from '@/utils/auth';
     export default {
         name: 'particles',
         data () {
@@ -39,6 +38,12 @@
                     name: 'login'
                 })
             }
+        },
+        created (){
+            if(this.$route.params.username){
+                setGuest(this.$route.params.username)
+            }
+
         },
         mounted () {
             particlesJS.load('particles','/src/images/particles.data');

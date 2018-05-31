@@ -341,7 +341,6 @@
                 }
             },
             handlePublish () {
-                alert(this.articleTagSelected.toString())
                 if (this.canPublish()) {
                     this.publishLoading = true;
                     this.$set(this.article,'id',new Date().getTime());

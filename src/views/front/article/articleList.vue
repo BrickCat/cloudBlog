@@ -1,9 +1,14 @@
 <template>
     <Row style="padding-top: 20px;padding-bottom: 20px;" :style="{height:this.height}">
         <transition name="fade">
-            <Col span="18" v-if="False">
-                没有文章
-            </Col>
+            <Row v-if="False" style="text-align: center;vertical-align: middle;" :style="{height:height}">
+                <Col span="24" style="margin-top: 1em;font-size: 18px;">
+                    主人很懒，什么也没留下 >_<|||
+                </Col>
+                <Col span="24">
+                    <img :src="src_404" style="width: 600px;height: 350px;margin-top: 13%;">
+                </Col>
+            </Row>
         </transition>
         <transition name="fade">
             <Col span="18" v-if="cardShow">
@@ -63,7 +68,8 @@
 
 <script>
     import ArticleListCell from './articleListCell';
-    import {list} from '@/api/article';
+    import { getGuest } from '@/utils/auth'
+    import {_f_article_list} from '@/api/article';
 
     export default {
         components: {ArticleListCell},
@@ -78,7 +84,8 @@
                 False:false,
                 spinShow: true,
                 cardShow:false,
-                height:''
+                height:'',
+                src_404:require('../../../images/404/0.gif'),
             }
         },
         computed: {
@@ -89,21 +96,34 @@
         },
         created () {
             this.height = document.body.offsetHeight+'px';
-            this.init();
+            if(getGuest()){
+                this.init();
+            }else{
+                this.$Notice.error({
+                    title: '错误消息',
+                    desc:'请求错误，请重新访问主页或登录配置博客。'
+                })
+            }
+
         },
         methods: {
             init(){
-                list(this.searchdata).then(resq =>{
-                    this.articles = resq.data.data.content;
-                    if(this.articles.length === 0){
-                        this.False = true;
-                        this.spinShow = false;
-                        this.height = '100%';
-                    }else{
-                        setTimeout(() => {
+                this.searchdata.username = getGuest();
+                _f_article_list(this.searchdata).then(resq =>{
+                    if(resq.data.status === 200){
+                        this.articles = resq.data.data.content;
+                        if(this.articles.length === 0){
+                            this.False = true;
+                            this.spinShow = false;
+                            this.height = document.documentElement.clientHeight || document.body.clientHeight;
+                            this.height = (this.height - 325)+'px';
+                            this.src_404 = require('../../../images/404/'+parseInt(6*Math.random())+'.gif')
+                        }else{
                             this.cardShow = true;
                             this.height = '100%';
-                        }, 3000);
+                        }
+                    }else{
+                        this.$Message.error(resq.data.msg);
                     }
                     this.spinShow = false;
                 }).catch(error =>{

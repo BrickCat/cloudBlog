@@ -192,6 +192,7 @@
                 article:{
                     id:'',
                     title: '',
+                    userId: '',
                     article_md: '',
                     article_html:'',
                     status: '0',
@@ -228,8 +229,8 @@
         },
         methods: {
             init(){
-                this.getTagList();
                 this.getArticle();
+
             },
             $imgAdd(){
 
@@ -244,6 +245,7 @@
                         if(resq.data.status ===200){
                             let article = resq.data.data;
                             this.$set(this.article,'id',article.id);
+                            this.$set(this.article,'userId',article.userId);
                             this.$set(this.article,'title',article.title);
                             this.$set(this.article,'password',article.password);
                             this.$set(this.article,'article_md',article.article_md);
@@ -266,9 +268,6 @@
                             this.pushTime = util.formatDate(new Date(article.date),'yyyy-MM-dd hh:mm:ss');
                             this.publishTimeType = 'timing';
 
-                            this.articleTagSelected = article.tags;
-                            this.$set(this.article,'tag',article.tags);
-
                             if(util.isNotEmpty(article.offenUsedClass)){
                                 this.offenUsedClassSelected = article.offenUsedClass.split(',');
                                 this.$set(this.article,'offenUsedClass',article.offenUsedClass.split(','));
@@ -277,6 +276,10 @@
                                 this.classificationSelected = article.classification.split(',');
                                 this.$set(this.article,'classification',article.classification.split(','))
                             }
+                            this.getTagList();
+                            this.articleTagSelected = article.tags;
+                            this.$set(this.article,'tag',article.tags.toString());
+
                         }else{
                             this.$Notice.error({
                                 title: '错误提示',
@@ -435,10 +438,9 @@
                 }
             },
             getTagList(){
-                tag_list_component().then(resq =>{
+                tag_list_component(this.article.userId).then(resq =>{
                     let tags = resq.data.data;
                     this.articleTagList = tags;
-                    console.log(this.articleTagList)
                 }).catch(e =>{
                     console.log(e)
                 })

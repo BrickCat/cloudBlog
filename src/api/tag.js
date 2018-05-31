@@ -25,9 +25,10 @@ export function tag_remove (tagId) {
     )
 }
 
-export function tag_list_component () {
+export function tag_list_component (userId) {
     return request({
         url: '/blog/tag/list/component',
         method: 'GET',
+        params: {'userId':userId}
     })
 }
