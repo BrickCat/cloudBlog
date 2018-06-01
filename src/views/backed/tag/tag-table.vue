@@ -228,6 +228,9 @@
                         this.$Message.error('标签名称不能超过5个字!');
                         return false;
                     }
+                    if(util.isEmpty(this.tag.id)){
+                        this.$set(this.tag,'id',new Date().getTime());
+                    }
                     tag_put(this.tag).then(reqs =>{
                         let data = reqs.data;
                         if(data.status === 200){
