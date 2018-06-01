@@ -5,7 +5,7 @@
             文章一览
         </p>
         <Row>
-            姓名：<Input v-model="searchdata.title" placeholder="请输入文章标题..." style="width: 200px" />
+            标题：<Input v-model="searchdata.title" placeholder="请输入文章标题..." style="width: 200px" />
             公开度：<Select v-model="searchdata.type" style="width:200px">
                     <Option v-for="item in types" :value="item.value" :key="item.value">{{ item.label }}</Option>
                  </Select>

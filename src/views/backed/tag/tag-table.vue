@@ -1,7 +1,7 @@
 <template>
     <Card>
         <p slot="title">
-            <Icon type="android-list"></Icon>
+            <Icon type="gear-a"></Icon>
             标签管理
         </p>
         <Row>
@@ -30,7 +30,7 @@
             <Col span="11" offset="1">
                 <Card>
                     <p slot="title">
-                        <Icon type="android-list"></Icon>
+                        <Icon type="compose"></Icon>
                         标签编辑
                     </p>
                     <Row>

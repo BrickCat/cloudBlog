@@ -293,6 +293,15 @@ util.isNotEmpty = function (data) {
     }
 }
 
+util.isEmpty = function (data) {
+    if( data!=null && data != undefined && data != ''){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+
 function padLeftZero(str) {
     return ('00' + str).substr(str.length);
 }
