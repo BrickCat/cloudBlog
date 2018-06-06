@@ -88,25 +88,32 @@
                 <div class="margin-top-10">
                     <Card>
                         <p slot="title">
-                            <Icon type="navicon-round"></Icon>
-                            分类目录
+                            <Icon type="ios-pricetags-outline"></Icon>
+                            栏目
                         </p>
-                        <Tabs type="card">
-                            <TabPane label="所有分类目录">
-                                <div class="classification-con">
-                                    <Tree :data="classificationList" @on-check-change="setClassificationInAll" show-checkbox></Tree>
-                                </div>
-                            </TabPane>
-                            <TabPane label="常用目录">
-                                <div class="classification-con">
-                                    <CheckboxGroup v-model="offenUsedClassSelected" @on-change="setClassificationInOffen">
-                                        <p v-for="item in offenUsedClass" :key="item.title">
-                                            <Checkbox :label="item.value">{{ item.title }}</Checkbox>
-                                        </p>
-                                    </CheckboxGroup>
-                                </div>
-                            </TabPane>
-                        </Tabs>
+                        <Row>
+                            <Col span="18">
+                                <Select v-model="articleCategorySelected" multiple @on-change="handleSelectCategory" placeholder="请选择文章栏目...">
+                                    <Option v-for="item in articleCategoryList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                                </Select>
+                            </Col>
+                            <Col span="6" class="padding-left-10">
+                                <Button v-show="!addingNewCategory" @click="handleAddNewCategory" long type="ghost">新建</Button>
+                            </Col>
+                        </Row>
+                        <transition name="add-new-tag">
+                            <div v-show="addingNewCategory" class="add-new-tag-con">
+                                <Col span="14">
+                                    <Input v-model="newCategoryName" placeholder="请输入栏目名" />
+                                </Col>
+                                <Col span="5" class="padding-left-10">
+                                    <Button @click="createNewCategory" long type="primary">确定</Button>
+                                </Col>
+                                <Col span="5" class="padding-left-10">
+                                    <Button @click="cancelCreateNewCategory" long type="ghost">取消</Button>
+                                </Col>
+                            </div>
+                        </transition>
                     </Card>
                 </div>
                 <div class="margin-top-10">
@@ -149,6 +156,7 @@
     import {put, get} from '@/api/article';
     import util from '@/libs/util';
     import {tag_put, tag_list_component} from '@/api/tag';
+    import {category_put,category_list_component} from '@/api/category';
 
     export default {
         name: 'artical-publish',
@@ -201,8 +209,7 @@
                     password: '',
                     date:'',
                     tag:[],
-                    classification:[],
-                    offenUsedClass:[]
+                    category:[]
                 },
                 pushTime:'',
                 articleError: '',
@@ -213,15 +220,14 @@
                 publishTimeType: 'immediately',
                 editPublishTime: false,  // 是否正在编辑发布时间
                 articleTagSelected: [],  // 文章选中的标签
+                articleCategorySelected: [],  // 文章选中的标签
                 articleTagList: [],  // 所有标签列表
-                classificationList: [],
-                classificationSelected: [],  // 在所有分类目录中选中的目录数组
-                offenUsedClass: [],
-                offenUsedClassSelected: [],  // 常用目录选中的目录
-                classificationFinalSelected: [],  // 最后实际选择的目录
+                articleCategoryList: [],  // 所有标签列表
                 publishLoading: false,
                 addingNewTag: false,  // 添加新标签
-                newTagName: ''// 新建标签名
+                addingNewCategory: false,  // 添加新标签
+                newTagName: '',// 新建标签名
+                newCategoryName: ''// 新建标签名
             };
         },
         created(){
@@ -267,18 +273,13 @@
                             this.$set(this.article,'date',article.date);
                             this.pushTime = util.formatDate(new Date(article.date),'yyyy-MM-dd hh:mm:ss');
                             this.publishTimeType = 'timing';
-
-                            if(util.isNotEmpty(article.offenUsedClass)){
-                                this.offenUsedClassSelected = article.offenUsedClass.split(',');
-                                this.$set(this.article,'offenUsedClass',article.offenUsedClass.split(','));
-                            }
-                            if(util.isNotEmpty(article.classification)){
-                                this.classificationSelected = article.classification.split(',');
-                                this.$set(this.article,'classification',article.classification.split(','))
-                            }
                             this.getTagList();
                             this.articleTagSelected = article.tags;
                             this.$set(this.article,'tag',article.tags.toString());
+
+                            this.getCategoryList();
+                            this.articleCategorySelected = article.categories;
+                            this.$set(this.article,'category',article.categories.toString());
 
                         }else{
                             this.$Notice.error({
@@ -332,17 +333,11 @@
             setPublishTime (datetime) {
                 this.pushTime = datetime;
             },
-            setClassificationInAll (selectedArray) {
-                this.classificationFinalSelected = selectedArray.map(item => {
-                    return item.id;
-                });
-                localStorage.classificationSelected = JSON.stringify(this.classificationFinalSelected); // 本地存储所选目录列表
-            },
-            setClassificationInOffen (selectedArray) {
-                this.classificationFinalSelected = selectedArray;
-            },
             handleAddNewTag () {
                 this.addingNewTag = !this.addingNewTag;
+            },
+            handleAddNewCategory () {
+                this.addingNewCategory = !this.addingNewCategory;
             },
             createNewTag () {
                 for(let i = 0; i<this.articleTagList.length; i++){
@@ -382,9 +377,51 @@
                     this.$Message.error('请输入标签名');
                 }
             },
+            createNewCategory () {
+                for(let i = 0; i<this.articleCategoryList.length; i++){
+                    let name = this.articleCategoryList[i].name;
+                    if(this.newCategoryName === name){
+                        this.$Message.error('该栏目已存在！');
+                        return false;
+                    }
+                }
+
+                if(this.articleCategorySelected.length == 3){
+                    this.$Message.info('最多只能选择三个栏目！');
+                    return false;
+                }
+
+                if (this.newCategoryName.length !== 0) {
+                    let category = {
+                        id:new Date().getTime(),
+                        name:this.newCategoryName
+                    }
+                    category_put(category).then(reqs =>{
+                        let data = reqs.data;
+                        if(data.status === 200){
+                            this.articleCategoryList.push(tag);
+                            this.articleCategorySelected.push(tag.id);
+                            this.addingNewCategory = false;
+                            setTimeout(() => {
+                                this.newCategoryName = '';
+                            }, 200);
+                            this.$Message.success('添加成功~')
+                        }
+                    }).catch(error =>{
+                        console.error(error);
+                    })
+
+                } else {
+                    this.$Message.error('请输入栏目名');
+                }
+            },
             cancelCreateNewTag () {
                 this.newTagName = '';
                 this.addingNewTag = false;
+            },
+            cancelCreateNewCategory () {
+                this.newCategoryName = '';
+                this.addingNewCategory = false;
             },
             canPublish () {
                 if (this.article.title.length === 0) {
@@ -405,8 +442,7 @@
                     this.$set(this.article,'tag',this.articleTagSelected.toString());
                     this.$set(this.article,'type',this.currentOpenness);
                     this.$set(this.article,'date',new Date(this.pushTime));
-                    this.$set(this.article,'classification',this.classificationSelected.toString());
-                    this.$set(this.article,'offenUsedClass',this.offenUsedClassSelected.toString());
+                    this.$set(this.article,'category',this.articleCategorySelected.toString());
                     put(this.article).then(resp =>{
                         this.publishLoading = false;
                         this.$Notice.success({
@@ -437,6 +473,16 @@
                     this.articleTagSelected = tags;
                 }
             },
+            handleSelectCategory () {
+                if(this.articleCategorySelected.length > 3){
+                    this.$Message.info('最多只能选择三个标签');
+                    let categories = [];
+                    categories[0] = this.articleCategorySelected[0];
+                    categories[1] = this.articleCategorySelected[1];
+                    categories[2] = this.articleCategorySelected[2];
+                    this.articleCategorySelected = categories;
+                }
+            },
             getTagList(){
                 tag_list_component(this.article.userId).then(resq =>{
                     let tags = resq.data.data;
@@ -444,109 +490,20 @@
                 }).catch(e =>{
                     console.log(e)
                 })
+            },
+            getCategoryList(){
+                category_list_component(this.article.userId).then(resq =>{
+                    let categories = resq.data.data;
+                    this.articleCategoryList = categories;
+                }).catch(e =>{
+                    console.log(e);
+                })
             }
         },
         computed: {
 
         },
         mounted () {
-            this.classificationList = [
-                {
-                    id:'1',
-                    title: 'Vue实例',
-                    expand: true,
-                    children: [
-                        {
-                            id:'11',
-                            title: '数据与方法',
-                            expand: true
-                        },
-                        {
-                            id:'12',
-                            title: '生命周期',
-                            expand: true
-                        }
-                    ]
-                },
-                {
-                    id:'2',
-                    title: 'Class与Style绑定',
-                    expand: true,
-                    children: [
-                        {
-                            id:'21',
-                            title: '绑定HTML class',
-                            expand: true,
-                            children: [
-                                {
-                                    id:'211',
-                                    title: '对象语法',
-                                    expand: true
-                                },
-                                {
-                                    id:'212',
-                                    title: '数组语法',
-                                    expand: true
-                                },
-                                {
-                                    id:'213',
-                                    title: '用在组件上',
-                                    expand: true
-                                }
-                            ]
-                        },
-                        {
-                            id:'22',
-                            title: '生命周期',
-                            expand: true
-                        }
-                    ]
-                },
-                {
-                    id:'3',
-                    title: '模板语法',
-                    expand: true,
-                    children: [
-                        {
-                            id:'31',
-                            title: '插值',
-                            expand: true
-                        },
-                        {
-                            id:'32',
-                            title: '指令',
-                            expand: true
-                        },
-                        {
-                            id:'33',
-                            title: '缩写',
-                            expand: true
-                        }
-                    ]
-                }
-            ];
-            this.offenUsedClass = [
-                {
-                    title: 'vue实例',
-                    value: '0',
-                },
-                {
-                    title: '生命周期',
-                    value: '1',
-                },
-                {
-                    title: '模板语法',
-                    value: '2',
-                },
-                {
-                    title: '插值',
-                    value: '3',
-                },
-                {
-                    title: '缩写',
-                    value: '4',
-                }
-            ];
-        },
+        }
     };
 </script>

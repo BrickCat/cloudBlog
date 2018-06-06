@@ -15,6 +15,7 @@
                 <Card :bordered="False" dis-hover :padding="0">
                     <article-list-cell v-for="article in articles" :article="article"></article-list-cell>
                 </Card>
+                <pagnation v-if="pageShow" :total="pagedata.total" :current-page='1' @pagechange="pagechange"></pagnation>
             </Col>
         </transition>
         <transition>
@@ -68,11 +69,13 @@
 
 <script>
     import ArticleListCell from './articleListCell';
+    import Pagnation from '../../components/pagination/pagnation';
     import { getGuest } from '@/utils/auth'
     import {_f_article_list} from '@/api/article';
+    import Particles from '../../blog_index/blog_index';
 
     export default {
-        components: {ArticleListCell},
+        components: {Pagnation, Particles, ArticleListCell},
         data () {
             return {
                 articles:[],
@@ -81,7 +84,13 @@
                     type:'',
                     status:''
                 },
+                pagedata:{
+                    total: 1500,
+                    page:'0',
+                    pageSize:'10',
+                },
                 False:false,
+                pageShow:false,
                 spinShow: true,
                 cardShow:false,
                 height:'',
@@ -108,10 +117,22 @@
         },
         methods: {
             init(){
+                this.initTable(0,this.pagedata.pageSize);
+            },
+            initTable(page,pageSize){
                 this.searchdata.username = getGuest();
+                this.searchdata.page = page;
+                this.searchdata.pageSize = pageSize;
                 _f_article_list(this.searchdata).then(resq =>{
                     if(resq.data.status === 200){
-                        this.articles = resq.data.data.content;
+                        let datas = resq.data.data.content;
+                        for(let i = 0;i< datas.length;i++){
+                            this.articles.push(datas[i]);
+                        }
+                        this.pagedata.total = resq.data.data.totalElements;
+                        if(resq.data.data.totalElements > 10){
+                            this.pageShow = true;
+                        }
                         if(this.articles.length === 0){
                             this.False = true;
                             this.spinShow = false;
@@ -129,6 +150,10 @@
                 }).catch(error =>{
                     console.error(error);
                 })
+            },
+            pagechange (page){
+                this.initTable(page-1,this.pagedata.pageSize);
+
             }
         },
         mounted () {

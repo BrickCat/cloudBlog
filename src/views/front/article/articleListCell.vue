@@ -32,8 +32,8 @@
                             <Col :xs="24" :sm="24" style="height: 1px;background-color: #CFCfCf;"></Col>
                             <Col :xs="24" :sm="24" style="margin-top: 1em;">
                                 <ul class="article-tag-list">
-                                    <li class="article-tag-list-item">
-                                        <a href="" class="article-tag-list-link waves-effect waves-button">Spring Cloud</a>
+                                    <li class="article-tag-list-item" v-for="category in article._f_categories">
+                                        <a href="" class="article-tag-list-link waves-effect waves-button">{{category.name}}</a>
                                     </li>
                                 </ul>
                             </Col>

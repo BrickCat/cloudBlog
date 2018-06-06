@@ -22,3 +22,11 @@ export function category_remove (id) {
         method: 'DELETE'
     })
 }
+
+export function category_list_component (userId) {
+    return request({
+        url: '/blog/category/list/component',
+        method: 'GET',
+        params: {'userId':userId}
+    })
+}

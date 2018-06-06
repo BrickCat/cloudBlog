@@ -13,16 +13,28 @@
                 </Input>
             </FormItem>
             <FormItem label="博客名称" prop="name">
-                <Input v-model="formValidate.name" placeholder="Enter your name"/>
+                <Input v-model="formValidate.name" placeholder="请输入博客名称..."/>
             </FormItem>
             <FormItem label="博客标题" prop="title">
-                <Input v-model="formValidate.title" placeholder="Enter your name"/>
+                <Input v-model="formValidate.title" placeholder="请输入博客标题..."/>
             </FormItem>
             <FormItem label="favicon" prop="favicon">
-                <Input v-model="formValidate.favicon" placeholder="Enter your name"/>
+                <Input v-model="formValidate.favicon" placeholder="请上传favicon..">
+                    <span slot="append">
+                        <Upload action="//jsonplaceholder.typicode.com/posts/" style="height: 20px">
+                            <Button type="ghost" icon="ios-cloud-upload-outline">上传Favicon</Button>
+                        </Upload>
+                    </span>
+                </Input>
             </FormItem>
             <FormItem label="logo" prop="logo">
-                <Input v-model="formValidate.logo" placeholder="Enter your name"/>
+                <Input v-model="formValidate.logo" placeholder="Enter your name">
+                    <span slot="append">
+                        <Upload action="//jsonplaceholder.typicode.com/posts/" style="height: 20px">
+                            <Button type="ghost" icon="ios-cloud-upload-outline">上传Logo</Button>
+                        </Upload>
+                    </span>
+                </Input>
             </FormItem>
             <FormItem label="简介" prop="description">
                 <Input v-model="formValidate.description" placeholder="Enter your name"/>
@@ -42,7 +54,7 @@
 </template>
 
 <script>
-    import {client_list} from '@/api/client';
+    import {client_list,client_put} from '@/api/client';
     import {getUser} from '@/utils/auth';
 
     export default {
@@ -51,6 +63,7 @@
             return{
                 user:{},
                 formValidate: {
+                    id:'',
                     netUrl: '',
                     name: '',
                     title: '',
@@ -85,8 +98,17 @@
                 client_list().then(resp =>{
                     let client = resp.data.data;
                     if(client){
+                        this.$set(this.formValidate,'id',client.id);
                         this.$set(this.formValidate,'netUrl',client.netUrl);
+                        this.$set(this.formValidate,'name',client.name);
+                        this.$set(this.formValidate,'title',client.title);
+                        this.$set(this.formValidate,'favicon',client.favicon);
+                        this.$set(this.formValidate,'logo',client.logo);
+                        this.$set(this.formValidate,'description',client.description);
+                        this.$set(this.formValidate,'footer',client.footer);
+                        this.$set(this.formValidate,'announcement',client.announcement);
                     }else{
+                        this.$set(this.formValidate,'id',new Date().getTime())
                         this.$set(this.formValidate,'netUrl','http://'+window.location.host+'/#/blog/'+this.user.username);
                         this.$set(this.formValidate,'name',this.user.username+'的博客');
                         this.$set(this.formValidate,'title','记录精彩的程序人生');
@@ -98,7 +120,16 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        this.$Message.success('Success!');
+                        client_put(this.formValidate).then(resp=>{
+                            console.log(resp)
+                            if(resp.status === 200){
+                                this.$Message.success('保存成功~')
+                            }else{
+                                this.$Message.error('保存失败！')
+                            }
+                        }).catch(e =>{
+                            console.log(e)
+                        })
                     } else {
                         this.$Message.error('Fail!');
                     }
