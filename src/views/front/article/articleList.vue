@@ -15,7 +15,7 @@
                 <Card :bordered="False" dis-hover :padding="0">
                     <article-list-cell v-for="article in articles" :article="article"></article-list-cell>
                 </Card>
-                <pagnation v-if="pageShow" :total="pagedata.total" :current-page='1' @pagechange="pagechange"></pagnation>
+                <pagnation v-if="pageShow" :total="pagedata.total" :current-page='1' :loading="loading" @pagechange="pagechange"></pagnation>
             </Col>
         </transition>
         <transition>
@@ -78,6 +78,7 @@
         components: {Pagnation, Particles, ArticleListCell},
         data () {
             return {
+                loading: false,
                 articles:[],
                 searchdata:{
                     title:'',
@@ -129,6 +130,7 @@
                         for(let i = 0;i< datas.length;i++){
                             this.articles.push(datas[i]);
                         }
+                        this.loading = false;
                         this.pagedata.total = resq.data.data.totalElements;
                         if(resq.data.data.totalElements > 10){
                             this.pageShow = true;
@@ -152,6 +154,7 @@
                 })
             },
             pagechange (page){
+                this.loading = true;
                 this.initTable(page-1,this.pagedata.pageSize);
 
             }
