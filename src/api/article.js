@@ -55,3 +55,10 @@ export function _f_article_list (param) {
         }
     )
 }
+
+export function _f_article_get (id) {
+    return request({
+        url: '/blog/article/f/' + id,
+        method: 'GET'
+    })
+}

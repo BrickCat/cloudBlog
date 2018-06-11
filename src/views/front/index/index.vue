@@ -63,8 +63,8 @@
                     </div>
                 </Menu>
             </Header>
-
             <div class="single-page-con">
+
                 <div class="single-page">
                     <router-view></router-view>
                 </div>
@@ -80,14 +80,14 @@
                         <p>Copyright © 2017 Mancool Inc. 保留所有权利。鲁公网安备 11010802022978号   |   公共事务邮箱  549595297@qq.com    商务合作邮箱  549595297@qq.com   |   Power by Maozk <span style="color: #ed3f14">❤</span> </p>
                     </div>
                 </footer>
+                <Button  @click="backTop" size="large" icon="arrow-up-b" style="position:fixed; bottom:230px;right: 40px"></Button>
             </div>
-
         </Layout>
     </div>
 </template>
 
 <script>
-    import { getUser,getGuest } from '@/utils/auth'
+    import { getUser,getGuest } from '@/utils/auth';
     export default {
         name: 'index',
         data () {
@@ -155,6 +155,9 @@
                     this.isLogin = true;
                     this.isNotLogin = false;
                 }
+            },
+            backTop(){
+
             },
             changeMenu(active){
                 if(active === 'blog'){

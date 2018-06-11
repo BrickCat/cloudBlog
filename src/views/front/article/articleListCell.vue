@@ -14,21 +14,23 @@
                                     </div>
                                 </div>
                             </Col>
-                            <Col :xs="24" :sm="24">
-                                <h2 class="post-title">
-                                    <a class="post-title-link">
-                                        {{article.title}}
-                                    </a>
-                                </h2>
-                            </Col>
-                            <Col :xs="24" :sm="24">
-                                <div class="post-content">
-                                    {{article.desc}}...
-                                    <span><a href="">
-                                        阅读更多...
-                                    </a></span>
-                                </div>
-                            </Col>
+                            <div v-on:click="ToArticle(article.id)" style="width: 100%;">
+                                <Col :xs="24" :sm="24">
+                                    <h2 class="post-title">
+                                        <a class="post-title-link">
+                                            {{article.title}}
+                                        </a>
+                                    </h2>
+                                </Col>
+                                <Col :xs="24" :sm="24">
+                                    <div class="post-content">
+                                        {{article.desc}}...
+                                        <span><a href="">
+                                            阅读更多...
+                                        </a></span>
+                                    </div>
+                                </Col>
+                            </div>
                             <Col :xs="24" :sm="24" style="height: 1px;background-color: #CFCfCf;"></Col>
                             <Col :xs="24" :sm="24" style="margin-top: 1em;">
                                 <ul class="article-tag-list">
@@ -69,10 +71,17 @@
         methods: {
             tagTo (tag){
                 alert(tag);
-            }
+            },
+            ToArticle (id){
+                this.$router.push({
+                    name:'article-detail',
+                    params:{
+                        articleId:id
+                    }
+                })
+            },
         },
         mounted (){
-            console.log(this.article)
         }
     };
 </script>
