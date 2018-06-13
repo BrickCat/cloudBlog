@@ -45,6 +45,10 @@ service.interceptors.response.use(
       message(res.status + '： ' + res.data)
     }else if(res.status === 404){
         message('此路径不存在~')
+    }else if(res.status === 401){
+        router.push({
+            name:'login'
+        })
     } else {
       message(res.status + '： ' + res.data.message)
     }
