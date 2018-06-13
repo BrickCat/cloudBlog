@@ -88,7 +88,7 @@ export const blogRouter = {
     children: [
         { path: 'blog_index', meta: {title: 'ITBC - 热门文章'}, name: 'blog_index',component: () => import('@/views/front/article/articleList.vue') },
         { path: 'ownspace2', title: '个人中心', name: 'ownspace_index2',component: () => import('@/views/own-space/own-space.vue') },
-        { path: 'article-detail', title: '文章详情', name: 'article-detail',component: () => import('@/views/front/article/article-detail.vue') },
+        { path: 'article-detail/:articleId', title: '文章详情', name: 'article-detail',component: () => import('@/views/front/article/article-detail.vue') },
     ]
 };
 

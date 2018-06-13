@@ -48,7 +48,7 @@
         components:{commentList},
         data (){
             return {
-                articleId: localStorage.getItem("articleId"),
+                articleId: '',
                 article:{},
                 isFalse:false,
                 isTrue:true,
@@ -61,6 +61,7 @@
             }
         },
         created (){
+            this.init();
         },
         mounted (){
 
@@ -71,7 +72,7 @@
         methods :{
             init(){
                 if(this.$route.params.articleId){
-                    localStorage.setItem("articleId",this.$route.params.articleId);
+                    this.articleId = this.$route.params.articleId;
                 }
                 this.getArticle();
             },
