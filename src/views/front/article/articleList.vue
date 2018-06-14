@@ -106,7 +106,9 @@
         },
         created () {
             this.height = document.body.offsetHeight+'px';
-            if(getGuest()){
+
+            if(this.$route.params.username){
+                this.$store.commit("SET_GUEST",this.$route.params.username);
                 this.init();
             }else{
                 this.$Notice.error({
@@ -121,7 +123,7 @@
                 this.initTable(0,this.pagedata.pageSize);
             },
             initTable(page,pageSize){
-                this.searchdata.username = getGuest();
+                this.searchdata.username = this.$route.params.username;
                 this.searchdata.page = page;
                 this.searchdata.pageSize = pageSize;
                 _f_article_list(this.searchdata).then(resq =>{

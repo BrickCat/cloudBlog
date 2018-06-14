@@ -66,12 +66,12 @@
             <div class="single-page-con">
 
                 <div class="single-page">
-                    <router-view></router-view>
+                    <router-view ></router-view>
                 </div>
                 <footer style="margin-top: 1em;">
                     <div class='address'>
                         <div class='data'>
-                            <img src='../../../images/logo.png' />
+                            <img src='../../../images/avatar.png' />
                             <p>4001 507 507（周一至周日：2:00 - 21:00）</p>
                             <p>济南市高新区工业南路万达写字楼J1栋2310室</p>
                         </div>
@@ -164,12 +164,15 @@
                     this.$router.push({
                         name:'blog',
                         params:{
-                            username: getGuest()
+                            username: this.$store.getters.guest
                         }
                     })
                 }else{
                     this.$router.push({
-                        name:active
+                        name:active,
+                        params:{
+                            username: this.$store.getters.guest
+                        }
                     })
                 }
             },
@@ -190,12 +193,18 @@
                     this.$store.dispatch('LogOut').then(() => {
                         //location.reload() // 为了重新实例化vue-router对象 避免bug
                         this.$router.push({
-                            name:'particles'
+                            name:'blog',
+                            params:{
+                                username:this.$store.getters.guest
+                            }
                         })
                     })
                 }else if(name == 'admin'){
                     this.$router.push({
-                        name: 'home_index'
+                        name: 'home_index',
+                        params:{
+                            username:this.$store.getters.guest
+                        }
                     })
                 }
 

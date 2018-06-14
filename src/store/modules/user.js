@@ -8,11 +8,15 @@ const user = {
         name: '',
         avatar: '',
         permissions: [],
-        roles: []
+        roles: [],
+        guest:''
     },
     mutations: {
         SET_TOKEN: (state, token) =>{
           state.token = token
+        },
+        SET_GUEST:(state,username) =>{
+          state.guest = username
         },
         SET_REFRESH_TOKEN: (state,rfToken) =>{
           state.refresh_token = rfToken

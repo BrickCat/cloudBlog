@@ -24,13 +24,16 @@
         name: 'particles',
         data () {
             return {
-
             }
         },
         methods:{
             ArticleListTo () {
                 this.$router.push({
-                    name: 'blog_index'
+                    name: 'blog_index',
+                    params:{
+                        username:this.$route.params.username
+                    }
+
                 })
             },
             LoginTo () {
@@ -41,7 +44,9 @@
         },
         created (){
             if(this.$route.params.username){
-                setGuest(this.$route.params.username)
+                this.username = this.$route.params.username;
+                setGuest(this.$route.params.username);
+                this.$store.commit('SET_GUEST',this.$route.params.username);
             }
 
         },
