@@ -1,12 +1,12 @@
 <template>
     <div class="new-comment">
         <div style="display: block;">
-            <a class="avatar" v-if="showAvatar"><img src="//upload.jianshu.io/users/upload_avatars/4394289/ac6a385a-38fc-4bcf-a187-6fb59eeca8b8.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>
-            <textarea v-model="commentText" placeholder="写下你的评论..." @focus="onFocus" v-on:input="inputFunc" @keyup.ctrl.13="addComment"></textarea>
-            <input type="text" ref="input" v-model="content">
+            <a class="avatar" v-if="showAvatar"><img :src="avatar"></a>
+            <textarea v-if="showComment" v-model="commentText" placeholder="写下你的评论..." @focus="onFocus" v-on:input="inputFunc" @keyup.ctrl.13="addComment" :style="{width:width}"></textarea>
+            <div class="sign-container" v-if="!showComment"><a v-on:click="login" class="btn btn-sign">登录</a> <span>后发表评论</span></div>
             <div class="write-function-block" :style="{float:float}" v-if="showButton">
                 <div class="emoji-modal-wrap">
-                    <a class="emoji" @click="showEmoji = true">
+                    <a class="emoji" @click="showEmoji = false">
                         <Icon style="font-size: 30px;color: #969696;" type="android-happy"></Icon>
                     </a>
                 </div>
@@ -34,8 +34,11 @@
 
 <script>
     import {put_comment} from '@/api/comment';
+    import {put_reply} from '@/api/reply';
     import vueEmoji from '@/views/components/emoji/emoji.vue';
     import data from '@/views/components/emoji/data/emoji-data.js';
+    import {getUser} from '@/utils/auth';
+
     let emojiData = {}
     Object.values(data).forEach(item => {
         emojiData = { ...emojiData, ...item }
@@ -48,29 +51,44 @@
                 showEmoji: false,
                 commentText:'',
                 content:'',
+                commentId:'',
                 src:null,
                 showButton:false,
                 showAvatar:true,
                 float:'',
                 type:'comment',
-                comment:{}
+                text:'',
+                comment:{},
+                reply:{},
+                user:{},
+                avatar:require('../../../images/avatar.png'),
+                showComment:false,
+                width:''
             }
         },
         props:{
-          articleId:{
-              type:String
+          article:{
+              type:Object
           }
         },
         created (){
-
+            if(getUser()){
+                this.user = JSON.parse(getUser());
+                this.avatar = this.user.avatar;
+                this.showComment = true;
+            }
         },
         mounted (){
 
         },
         methods :{
             selectEmoji(v){
+                //追加表情
+                let text = this.commentText;
+
                 this.commentText += v;
 
+                this.content = text + this.emoji(v);
             },
             onFocus() {
                 this.showButton = true;
@@ -82,22 +100,46 @@
                 this.$emit('onCancel')
             },
             inputFunc(){
-                alert(this.commentText)
+
             },
             addComment() {
+                if(this.commentText.length === 0){
+                    return false;
+                }
                 if('comment' == this.type){
                     this.comment.id = new Date().getTime();
-                    this.comment.articleId = this.$props.articleId;
-                    this.comment.content = this.commentText
+                    this.comment.articleId = this.$props.article.id;
+                    this.comment.content = this.commentText;
                     put_comment(this.comment).then(res =>{
                         if(res.status === 200){
                             this.$Message.success('评论成功！');
+                            this.commentText = '';
                         }
                         console.log(res)
                     }).catch(e =>{
                         console.log(e)
                     })
+                }else if('reply' == this.type){
+                    this.reply.id = new Date().getTime();
+                    this.reply.to_userId = this.$props.article.anthor.userId;
+                    this.reply.commentId = this.commentId;
+                    this.reply.content = this.commentText;
+                    this.reply.replyType = '1';
+                    this.reply.replyId = this.commentId;
+                    put_reply(this.reply).then(res=>{
+                        if(res.status === 200){
+                            this.$Message.success('回复成功！');
+                            this.commentText = '';
+                        }
+                    }).catch(e =>{
+                        console.error(e);
+                    })
                 }
+            },
+            login(){
+              this.$router.push({
+                  name:'login'
+              })
             },
             emoji (value) {
                 if (!value) return
@@ -106,14 +148,16 @@
                     console.log(value)
                 })
                 this.src = require('../../../images/emoji/'+value);
-                let html = `<img src="${this.src}" width="16px" height="16px">`
+                let html = `<img src="${this.src}" width="20px" height="20px" style="vertical-align: middle;">`
                 return html;
             },
-            handleType(type){
+            handleType(type,commentId){
                 this.showButton = true;
-                this.float = 'left!important';
+                this.float = 'right!important';
+                this.width = '620px!important';
                 this.showAvatar = false;
                 this.type = type;
+                this.commentId = commentId;
             }
         },
         watch:{
@@ -135,6 +179,56 @@
             border: 1px solid #ddd;
             border-radius: 50%;
         }
+    }
+    .sign-container {
+        text-align: center;
+        padding: 10px 15px;
+        width: 572px;
+        height: 80px;
+        font-size: 13px;
+        border: 1px solid #dcdcdc;
+        border-radius: 4px;
+        background-color: hsla(0,0%,71%,.1);
+        resize: none;
+        display: inline-block;
+        vertical-align: top;
+        outline-style: none;
+            span {
+            font-size: 14px;
+            vertical-align: -7px;
+        }
+    }
+    .btn {
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        background-image: none;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857;
+        border-radius: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    .btn-sign {
+        width: 78px;
+        margin: 11px 10px 0 0;
+        padding: 7px 18px;
+        font-size: 16px;
+        border: none;
+        border-radius: 20px;
+        color: #fff!important;
+        background-color: #3194d0;
+        outline: none;
     }
     .new-comment{
         position: relative;

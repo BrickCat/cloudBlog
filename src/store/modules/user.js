@@ -59,9 +59,7 @@ const user = {
                     }
                     commit('SET_PERMISSIONS', permissions)
                     setUser(JSON.stringify(data.sysUser));
-                    router.push({
-                        name: 'home_index'
-                    })
+                    router.go(-1);
                     resolve(response)
                 }).catch(error => {
                     reject(error)

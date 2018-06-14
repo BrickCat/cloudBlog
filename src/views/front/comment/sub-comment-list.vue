@@ -1,6 +1,6 @@
 <template>
     <div class="sub-comment-list">
-        <div class="sub-comment" v-for="n in 4">
+        <div class="sub-comment" v-for="item in replies">
             <p>
                 <div class="v-tooltip-container" style="z-index: 0;">
                     <div class="v-tooltip-content">
@@ -25,13 +25,13 @@
                 <Icon type="android-create" style="margin-left: 4px;margin-right: 4px;font-size: 18px"></Icon>
                 <span v-on:click="addReply('reply')">添加新评论</span>
             </a>
-            <span class="line-warp">
+            <span v-if="replies.length > 3" class="line-warp">
                 还有3条评论，
                 <a>展开查看</a>
             </span>
         </div>
         <transition name="slide-fade">
-            <vue-comment @onFocus="onFocus" @onCancel="onCancel" :articleId="articleId" v-show="showComment" style="margin-bottom: 30px;margin-top: 15px;" ref="reply"></vue-comment>
+            <vue-comment @onFocus="onFocus" @onCancel="onCancel" :article="article" v-show="showComment" style="margin-bottom: 30px;margin-top: 15px;" ref="reply"></vue-comment>
         </transition>
     </div>
 </template>
@@ -40,6 +40,8 @@
     import vueEmoji from '@/views/components/emoji/emoji.vue';
     import data from '@/views/components/emoji/data/emoji-data.js';
     import vueComment from '@/views/front/comment/comment.vue';
+    import {_f_reply_list} from '@/api/reply';
+
     let emojiData = {}
     Object.values(data).forEach(item => {
         emojiData = { ...emojiData, ...item }
@@ -54,18 +56,19 @@
                 showButton:false,
                 showComment:false,
                 commentType:'reply',
+                replies:[]
             }
         },
         props :{
-            subcomments :{
-                type :Array
+            article: {
+                type: Object
             },
-            articleId: {
-                type: String
+            comment: {
+                type:Object
             }
         },
         created (){
-
+            this.init();
         },
         mounted (){
 
@@ -74,6 +77,9 @@
 
         },
         methods :{
+            init(){
+              this.getReply();
+            },
             onFocus() {
                 this.showButton = true;
             },
@@ -96,15 +102,24 @@
                 this.showComment = true;
                 if(type == 'reply'){
                     this.commentType = 'reply';
+                    this.$refs.reply.handleType(type,this.$props.comment.id)
                 }else if(type == 'reply2'){
                     this.commentType = 'reply2';
-
                 }
-                this.$refs.reply.handleType(type)
+
             },
-            handleReply (type){
+            handleReply (type,commentId){
                 this.showComment = true;
-                this.$refs.reply.handleType(type)
+                this.$refs.reply.handleType(type,commentId)
+            },
+            getReply(){
+                _f_reply_list(this.$props.comment.id).then(res=>{
+                    if(res.status === 200){
+                        this.replies = res.data.data.content;
+                    }
+                }).catch(e =>{
+                    console.log(e)
+                })
             }
 
         }

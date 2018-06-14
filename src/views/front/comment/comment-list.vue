@@ -1,7 +1,7 @@
 <template>
     <div class="comment-list">
         <div>
-            <vue-comment @onFocus="onFocus" @onCancel="onCancel" :articleId="articleId"></vue-comment>
+            <vue-comment @onFocus="onFocus" @onCancel="onCancel" :article="article"></vue-comment>
         </div>
         <div class="comments-placeholder" v-if="isFalse">
             <div class="author">
@@ -53,7 +53,7 @@
                                         <Icon type="ios-heart-outline" style="margin-right: 4px;font-size: 20px; vertical-align:middle;"></Icon>
                                         <span style="font-size: 14px;">赞</span>
                                     </a>
-                                    <a class="" @click="addReply(index)" style="margin-left: 10px;">
+                                    <a class="" @click="addReply(index,item.id)" style="margin-left: 10px;">
                                         <Icon type="ios-chatbubble-outline" style="margin-right: 4px;font-size: 23px; vertical-align:middle;"></Icon>
                                         <span style="font-size: 14px;" >回复</span>
                                     </a>
@@ -64,7 +64,7 @@
                             </div>
                         </div>
                     </div>
-                    <sub-comment-list ref="subcommentlist" :articleId="articleId"></sub-comment-list>
+                    <sub-comment-list ref="subcommentlist" :article="article" :comment="item"></sub-comment-list>
                 </div>
             </div>
         </div>
@@ -91,8 +91,8 @@
             }
         },
         props:{
-            articleId:{
-                type: String
+            article:{
+                type: Object
             },
             comments:Array
         },
@@ -112,8 +112,8 @@
             onCancel (){
                 this.marginTop = '30px';
             },
-            addReply(index){
-                this.$refs.subcommentlist[index].handleReply('reply');
+            addReply(index,commentId){
+                this.$refs.subcommentlist[index].handleReply('reply',commentId);
             }
         },
         filters:{
@@ -121,6 +121,9 @@
                 var date = new Date(time);
                 return util.formatDate(date, "yyyy-MM-dd hh:mm");
             },
+            formatContent(content){
+
+            }
         }
     };
 </script>

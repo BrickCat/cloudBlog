@@ -14,7 +14,7 @@
                     <img :src="anthor.avatar" alt="96">
                 </a>
                 <div class="info">
-                    <span class="name"><a href="/u/1441f4ae075d" style="color: #333;">彭小六</a></span>
+                    <span class="name"><a href="/u/1441f4ae075d" style="color: #333;">{{anthor.username}}</a></span>
                     <img class="badge-icon" data-toggle="tooltip" title="" src="//upload.jianshu.io/user_badge/650526a4-4446-48c0-a1ab-bbfe12fe510c" alt="650526a4 4446 48c0 a1ab bbfe12fe510c" data-original-title="简书大学堂讲师">
                     <!-- 关注用户按钮 -->
                     <Button type="success" shape="circle" size="small" icon="plus-round">关注</Button>
@@ -34,7 +34,7 @@
             />
         </Col>
         <Col class="width">
-            <comment-list :articleId="articleId" :comments.sync="comments"></comment-list>
+            <comment-list :article="article" :comments.sync="comments"></comment-list>
         </Col>
     </Row>
 </template>

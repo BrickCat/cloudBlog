@@ -10,7 +10,7 @@ export function put_comment (comment) {
 
 export function list_comment (articleId) {
     return request({
-        url: '/blog/comment/'+articleId,
+        url: '/blog/comment/f/'+articleId,
         method: 'GET'
     })
 }
