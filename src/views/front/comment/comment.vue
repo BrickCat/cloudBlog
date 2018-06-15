@@ -63,7 +63,8 @@
                 user:{},
                 avatar:require('../../../images/avatar.png'),
                 showComment:false,
-                width:''
+                width:'',
+                replyTo:{}
             }
         },
         props:{
@@ -134,6 +135,22 @@
                     }).catch(e =>{
                         console.error(e);
                     })
+                }else if('reply2' == this.type){
+                    this.reply.id = new Date().getTime();
+                    this.reply.to_userId = this.replyTo.from_user_id;
+                    this.reply.commentId = this.replyTo.commentId;
+                    this.reply.content = this.commentText;
+                    this.reply.replyType = '2';
+                    this.reply.replyId = this.reply.id;
+                    console.log(this.reply)
+                    put_reply(this.reply).then(res=>{
+                        if(res.status === 200){
+                            this.$Message.success('回复'+this.replyTo.replyName+'成功！');
+                            this.commentText = '';
+                        }
+                    }).catch(e =>{
+                        console.error(e);
+                    })
                 }
             },
             login(){
@@ -157,7 +174,13 @@
                 this.width = '620px!important';
                 this.showAvatar = false;
                 this.type = type;
-                this.commentId = commentId;
+                if(type == 'reply'){
+                    this.commentId = commentId;
+                    this.commentText = '';
+                }else if(type == 'reply2'){
+                    this.replyTo = commentId;
+                    this.commentText = '@'+this.replyTo.replyName;
+                }
             }
         },
         watch:{

@@ -4,14 +4,14 @@
             <p>
                 <div class="v-tooltip-container" style="z-index: 0;">
                     <div class="v-tooltip-content">
-                        <a href="/u/d15143ba3330" target="_blank">圆木鱼</a>：
+                        <a href="/u/d15143ba3330" target="_blank">{{item.replyName}}</a>：
                     </div>
                 </div>
-                <span>就是就是</span>
+                <span>{{item.content}}</span>
             </p>
             <div class="sub-tool-group">
-                <span>2018.06.01 09:06</span>
-                <a v-on:click="addReply('reply2')" style="margin-left: 10px;">
+                <span>{{item.createDate | formatDate}}</span>
+                <a v-on:click="addReply('reply2',item)" style="margin-left: 10px;">
                     <Icon type="ios-chatbubble-outline" style="margin-right: 2px;font-size: 20px; vertical-align:middle;"></Icon>
                     <span style="vertical-align:middle;">回复</span>
                 </a>
@@ -23,7 +23,7 @@
         <div class="sub-comment more-comment">
             <a class="add-comment-btn">
                 <Icon type="android-create" style="margin-left: 4px;margin-right: 4px;font-size: 18px"></Icon>
-                <span v-on:click="addReply('reply')">添加新评论</span>
+                <span v-on:click="addReply('reply','')">添加新评论</span>
             </a>
             <span v-if="replies.length > 3" class="line-warp">
                 还有3条评论，
@@ -41,6 +41,7 @@
     import data from '@/views/components/emoji/data/emoji-data.js';
     import vueComment from '@/views/front/comment/comment.vue';
     import {_f_reply_list} from '@/api/reply';
+    import util from '@/libs/util.js';
 
     let emojiData = {}
     Object.values(data).forEach(item => {
@@ -98,13 +99,14 @@
                 let html = `<img src="${this.src}" width="16px" height="16px">`
                 return html;
             },
-            addReply (type){
+            addReply (type,reply){
                 this.showComment = true;
                 if(type == 'reply'){
                     this.commentType = 'reply';
                     this.$refs.reply.handleType(type,this.$props.comment.id)
                 }else if(type == 'reply2'){
                     this.commentType = 'reply2';
+                    this.$refs.reply.handleType(type,reply)
                 }
 
             },
@@ -114,6 +116,7 @@
             },
             getReply(){
                 _f_reply_list(this.$props.comment.id).then(res=>{
+                    console.log(res)
                     if(res.status === 200){
                         this.replies = res.data.data.content;
                     }
@@ -122,6 +125,15 @@
                 })
             }
 
+        },
+        filters:{
+            formatDate(time){
+                var date = new Date(time);
+                return util.formatDate(date, "yyyy-MM-dd hh:mm");
+            },
+            formatContent(content){
+
+            }
         }
 
     };
